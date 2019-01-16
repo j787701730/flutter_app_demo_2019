@@ -12,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
   List slider = [];
   List goodsClass = [];
+  List goods = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -21,6 +22,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
     // TODO: implement initState
     _pullNet(context);
     getGoodsClass(context);
+    getGoods(context);
     super.initState();
   }
 
@@ -39,15 +41,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
       var len = ((data['goodsClass'].length + 1) / step).ceil();
       var fullClass = {
         'b_logo': null,
-        'children': {
-          "value": 64,
-          "label": "开关面板",
-          "pc_logo": "static/images/goods_class/dj/kgmb.png",
-          "m_logo": null,
-          "f_logo": null,
-          "b_logo": null,
-          "children": ""
-        },
+        'children': [],
         'f_logo': null,
         'label': '全部分类',
         'm_logo': 'static/images/goods_class/fl.png',
@@ -77,80 +71,13 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
     }, () {}, context);
   }
 
-//  // 商品小分类
-//  classItem(item) {
-//    return Container(
-//      width: MediaQuery.of(context).size.width / 5 - 20,
-//      height: MediaQuery.of(context).size.width / 5 - 20,
-//      margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-//      child: Column(
-//        children: <Widget>[
-//          Image.network('$pathName/' + item['m_logo']),
-//          Text(item['label'])
-//        ],
-//      ),
-//    );
-//  }
-
-//  classSwiper() {
-//    if (goodsClass.length == 0) return null;
-//    const step = 10;
-//    var len = ((goodsClass.length + 1) / step).ceil();
-//    var fullClass = {
-//      'b_logo': null,
-//      'children': '',
-//      'f_logo': null,
-//      'label': '全部分类',
-//      'm_logo': 'static/images/goods_class/fl.png',
-//      'pc_logo': null,
-//      'value': 0
-//    };
-//
-//    cls(i) {
-//      var end = ((i + 1) * step > goodsClass.length)
-//          ? goodsClass.length
-//          : (i + 1) * step;
-//      newClass.insert(i, goodsClass.sublist(i * step, end));
-//      if (i == len - 1) {
-//        newClass[i].add(fullClass);
-//      }
-//    }
-//
-//    if (len > 1) {
-//      const html = [];
-//      for (var i = 0; i < len; i += 1) {
-//        cls(i);
-//      }
-//    } else {}
-////    return (Column(
-////      children: <Widget>[
-//////    goodsClass.forEach((item){ this.classItem(item)}),
-////        fullClass
-////      ],
-////    )
-////    <
-////    View style =
-////    {
-////    {
-////    display: 'flex',
-////    flexWrap: 'wrap',
-////    justifyContent: 'flex-start',
-////    flexDirection: 'row'
-////    }
-////    }
-////    >
-////    {
-////    goodsClass.map(item => this.classItem(item))
-////    }
-////    {
-////    fullClass
-////    }
-////    <
-////    /
-////    View
-////    >
-////        );
-//  }
+  getGoods(context) {
+    ajax('Goods/indexG', '', false, (data) {
+      setState(() {
+        goods = data['data'];
+      });
+    }, () {}, context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +150,25 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
               itemCount: goodsClass.length == 0 ? 1 : goodsClass.length,
               pagination: new SwiperPagination(),
 //              control: new SwiperControl(),
+            ),
+          ),
+          Container(
+            child: Column(
+              children: goods.map<Widget>((item) {
+                return Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: new EdgeInsets.only(top: 6.0),
+                      child: Text(item['label']),
+                    ),
+                    new Wrap(
+                      children: item['goods'].map((goodsItem) {
+                        return Text(goodsItem['goods_name']);
+                      }),
+                    )
+                  ],
+                );
+              }).toList(),
             ),
           )
         ],
