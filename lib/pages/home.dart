@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_app_demo/util/util.dart';
+import 'searchBar.dart';
+import 'goodsDesc.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -48,11 +50,8 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
         'pc_logo': null,
         'value': 0
       };
-
       cls(i) {
-        var end = ((i + 1) * step > data['goodsClass'].length)
-            ? data['goodsClass'].length
-            : (i + 1) * step;
+        var end = ((i + 1) * step > data['goodsClass'].length) ? data['goodsClass'].length : (i + 1) * step;
         newClass.insert(i, data['goodsClass'].sublist(i * step, end));
         if (i == len - 1) {
           newClass[i].add(fullClass);
@@ -64,7 +63,6 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
           cls(i);
         }
       } else {}
-
       setState(() {
         goodsClass = newClass;
       });
@@ -82,9 +80,13 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(
-//        title: Text('home'),
-//      ),
+      appBar: AppBar(title: Text('home'), actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: searchBarDelegate());
+            }),
+      ]),
       body: ListView(
         children: <Widget>[
           Container(
@@ -129,13 +131,10 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                               children: <Widget>[
                                 new SizedBox(
                                   child: new Container(
-                                    child: new Image.network(
-                                        pathName + item['m_logo']),
+                                    child: new Image.network(pathName + item['m_logo']),
                                   ),
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.12,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.12,
+                                  height: MediaQuery.of(context).size.width * 0.12,
+                                  width: MediaQuery.of(context).size.width * 0.12,
                                 ),
                                 new Padding(
                                   padding: new EdgeInsets.only(top: 6.0),
@@ -153,23 +152,90 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
             ),
           ),
           Container(
-            child: Column(
-              children: goods.map<Widget>((item) {
-                return Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: new EdgeInsets.only(top: 6.0),
-                      child: Text(item['label']),
-                    ),
-                    new Wrap(
-                      children: item['goods'].map((goodsItem) {
-                        return Text(goodsItem['goods_name']);
-                      }),
-                    )
-                  ],
-                );
-              }).toList(),
-            ),
+            child: (goods.length == 0
+                ? Placeholder(
+                    fallbackWidth: 100.0,
+                    fallbackHeight: 100.0,
+                    color: Colors.transparent,
+                  )
+                : Column(
+                    children: goods.map<Widget>((item) {
+                      return Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsetsDirectional.only(top: 15),
+                          ),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage(pathName + 'static/images/index/mobile/pic_09.png'),
+                                    fit: BoxFit.contain)),
+                            child: Container(
+                              padding: new EdgeInsets.only(top: 6.0, bottom: 6.0),
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                item['label'],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red),
+                              ),
+                            ),
+                          ),
+                          new Wrap(
+                            children: item['goods'].map<Widget>((goodsItem) {
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+                                        return new GoodsDesc(goodsItem['goods_name'],goodsItem['goods_id']);
+                                      }));
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Image.network(
+                                            pathName + goodsItem['goods_pics'][0]['thumbs']['400']['file_path'],
+                                            fit: BoxFit.contain,
+                                            width: MediaQuery.of(context).size.width / 2 - 10,
+                                            height: MediaQuery.of(context).size.width / 2 - 10,
+                                          ),
+                                          Align(
+                                            alignment: FractionalOffset.topLeft,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 6, 10, 0),
+                                              child: Text(
+                                                goodsItem['goods_name'],
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: FractionalOffset.topLeft,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                              child: Text(
+                                                '￥' + goodsItem['goods_price'],
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      );
+                    }).toList(),
+                  )),
           )
         ],
       ),
