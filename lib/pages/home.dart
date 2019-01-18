@@ -96,14 +96,14 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
               itemBuilder: (c, index) {
                 return (slider.length == 0
                     ? new Placeholder(
-                  fallbackWidth: 100.0,
-                  fallbackHeight: 100.0,
-                  color: Colors.transparent,
-                )
+                        fallbackWidth: 100.0,
+                        fallbackHeight: 100.0,
+                        color: Colors.transparent,
+                      )
                     : new Image.network(
-                  pathName + slider[index]['pic_url'],
-                  fit: BoxFit.contain,
-                ));
+                        "$pathName${slider[index]['pic_url']}",
+                        fit: BoxFit.contain,
+                      ));
               },
               itemCount: slider.length == 0 ? 1 : slider.length,
               pagination: new SwiperPagination(),
@@ -117,34 +117,34 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
               itemBuilder: (c, index) {
                 return (goodsClass.length == 0
                     ? new Placeholder(
-                  fallbackWidth: 100.0,
-                  fallbackHeight: 100.0,
-                  color: Colors.transparent,
-                )
+                        fallbackWidth: 100.0,
+                        fallbackHeight: 100.0,
+                        color: Colors.transparent,
+                      )
                     : new Wrap(
-                  runSpacing: 6.0,
-                  children: goodsClass[index].map<Widget>((item) {
-                    return new SizedBox(
-                      width: MediaQuery.of(context).size.width / 5,
-                      child: new Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          new SizedBox(
-                            child: new Container(
-                              child: new Image.network(pathName + item['m_logo']),
+                        runSpacing: 6.0,
+                        children: goodsClass[index].map<Widget>((item) {
+                          return new SizedBox(
+                            width: MediaQuery.of(context).size.width / 5,
+                            child: new Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                new SizedBox(
+                                  child: new Container(
+                                    child: new Image.network("$pathName${item['m_logo']}"),
+                                  ),
+                                  height: MediaQuery.of(context).size.width * 0.12,
+                                  width: MediaQuery.of(context).size.width * 0.12,
+                                ),
+                                new Padding(
+                                  padding: new EdgeInsets.only(top: 6.0),
+                                  child: new Text(item['label']),
+                                )
+                              ],
                             ),
-                            height: MediaQuery.of(context).size.width * 0.12,
-                            width: MediaQuery.of(context).size.width * 0.12,
-                          ),
-                          new Padding(
-                            padding: new EdgeInsets.only(top: 6.0),
-                            child: new Text(item['label']),
-                          )
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ));
+                          );
+                        }).toList(),
+                      ));
               },
               itemCount: goodsClass.length == 0 ? 1 : goodsClass.length,
               pagination: new SwiperPagination(),
@@ -154,88 +154,88 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
           Container(
             child: (goods.length == 0
                 ? Placeholder(
-              fallbackWidth: 100.0,
-              fallbackHeight: 100.0,
-              color: Colors.transparent,
-            )
+                    fallbackWidth: 100.0,
+                    fallbackHeight: 100.0,
+                    color: Colors.transparent,
+                  )
                 : Column(
-              children: goods.map<Widget>((item) {
-                return Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsetsDirectional.only(top: 15),
-                    ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: NetworkImage(pathName + 'static/images/index/mobile/pic_09.png'),
-                              fit: BoxFit.contain)),
-                      child: Container(
-                        padding: new EdgeInsets.only(top: 6.0, bottom: 6.0),
-                        width: MediaQuery.of(context).size.width,
-                        child: Text(
-                          item['label'],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red),
-                        ),
-                      ),
-                    ),
-                    new Wrap(
-                      children: item['goods'].map<Widget>((goodsItem) {
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width / 2,
-                          child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                                  return new GoodsDesc(goodsItem['goods_name'], goodsItem['goods_id']);
-                                }));
-                              },
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Image.network(
-                                      pathName + goodsItem['goods_pics'][0]['thumbs']['400']['file_path'],
-                                      fit: BoxFit.contain,
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      height: MediaQuery.of(context).size.width / 2 - 10,
-                                    ),
-                                    Align(
-                                      alignment: FractionalOffset.topLeft,
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(10, 6, 10, 0),
-                                        child: Text(
-                                          goodsItem['goods_name'],
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
+                    children: goods.map<Widget>((item) {
+                      return Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsetsDirectional.only(top: 15),
+                          ),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage("${pathName}static/images/index/mobile/pic_09.png"),
+                                    fit: BoxFit.contain)),
+                            child: Container(
+                              padding: new EdgeInsets.only(top: 6.0, bottom: 6.0),
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                item['label'],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red),
+                              ),
+                            ),
+                          ),
+                          new Wrap(
+                            children: item['goods'].map<Widget>((goodsItem) {
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+                                        return new GoodsDesc(goodsItem['goods_name'], goodsItem['goods_id']);
+                                      }));
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Image.network(
+                                            "$pathName${goodsItem['goods_pics'][0]['thumbs']['400']['file_path']}",
+                                            fit: BoxFit.contain,
+                                            width: MediaQuery.of(context).size.width / 2 - 10,
+                                            height: MediaQuery.of(context).size.width / 2 - 10,
                                           ),
-                                        ),
+                                          Align(
+                                            alignment: FractionalOffset.topLeft,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 6, 10, 0),
+                                              child: Text(
+                                                goodsItem['goods_name'],
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: FractionalOffset.topLeft,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                              child: Text(
+                                                "￥${goodsItem['goods_price']}",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: FractionalOffset.topLeft,
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        child: Text(
-                                          '￥' + goodsItem['goods_price'],
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                );
-              }).toList(),
-            )),
+                                    )),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      );
+                    }).toList(),
+                  )),
           )
         ],
       ),

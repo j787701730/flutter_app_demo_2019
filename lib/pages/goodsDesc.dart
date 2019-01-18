@@ -53,7 +53,7 @@ class _GoodsDesc extends State<GoodsDesc> {
                         color: Colors.transparent,
                       )
                     : new Image.network(
-                        pathName + goodsData['goods_pics'][index]['file_path'],
+                        "$pathName${goodsData['goods_pics'][index]['file_path']}",
                         fit: BoxFit.contain,
                       ));
               },
