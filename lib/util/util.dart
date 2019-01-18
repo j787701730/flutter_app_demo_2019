@@ -9,23 +9,20 @@ const pathName = 'https://www.anju.site/';
 showADialog(context, msg) {
   showDialog(
       context: context,
-      builder: (_) => new AlertDialog(
-              title: new Text("提示"),
-              content: new Text(msg),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("CANCEL"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ]));
+      builder: (_) => new AlertDialog(title: new Text("提示"), content: new Text(msg), actions: <Widget>[
+            new FlatButton(
+              child: new Text("CANCEL"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ]));
 }
 
 ajax(String url, Object data, toast, sucFun, failFun, context) async {

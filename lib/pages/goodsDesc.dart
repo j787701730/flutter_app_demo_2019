@@ -30,7 +30,6 @@ class _GoodsDesc extends State<GoodsDesc> {
 
   getDesc() {
     ajax('goods/desc', {'goods_id': goodsID}, false, (data) {
-      print(data);
       setState(() {
         goodsData = data['data'];
       });
@@ -63,44 +62,55 @@ class _GoodsDesc extends State<GoodsDesc> {
               control: new SwiperControl(),
             ),
           ),
-          Align(
-            alignment: FractionalOffset.bottomLeft,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Padding(
+          (goodsData.length == 0
+              ? Placeholder(
+                  fallbackWidth: 100.0,
+                  fallbackHeight: 100.0,
+                  color: Colors.transparent,
+                )
+              : Align(
+                  alignment: FractionalOffset.bottomLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          '￥${goodsData['goods_price']}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 6),
+                        child: Text(
+                          '￥${goodsData['goods_org_price']}',
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            decorationStyle: TextDecorationStyle.solid,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          (goodsData.length == 0
+              ? Placeholder(
+                  fallbackWidth: 100.0,
+                  fallbackHeight: 100.0,
+                  color: Colors.transparent,
+                )
+              : Container(
                   padding: EdgeInsets.only(left: 10),
                   child: Text(
-                    '￥${goodsData['goods_price']}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
+                    goodsData['goods_name'],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 6),
-                  child: Text(
-                    '￥${goodsData['goods_org_price']}',
-                    style: TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      decorationStyle: TextDecorationStyle.solid,
-                      decorationColor: Colors.red,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 10),
-            child: Text(
-              goodsData['goods_name'],
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          )
+                ))
         ],
       ),
     );
