@@ -3,6 +3,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'searchBar.dart';
 import 'goodsDesc.dart';
+import 'goodsClass.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -126,21 +127,34 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                         children: goodsClass[index].map<Widget>((item) {
                           return new SizedBox(
                             width: MediaQuery.of(context).size.width / 5,
-                            child: new Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                new SizedBox(
-                                  child: new Container(
-                                    child: new Image.network("$pathName${item['m_logo']}"),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (item['value'] == 0) {
+                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+                                    return new GoodsClass();
+                                  }));
+                                } else {
+//                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+//                                    return new GoodsClass(item['value']);
+//                                  }));
+                                }
+                              },
+                              child: new Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  new SizedBox(
+                                    child: new Container(
+                                      child: new Image.network("$pathName${item['m_logo']}"),
+                                    ),
+                                    height: MediaQuery.of(context).size.width * 0.12,
+                                    width: MediaQuery.of(context).size.width * 0.12,
                                   ),
-                                  height: MediaQuery.of(context).size.width * 0.12,
-                                  width: MediaQuery.of(context).size.width * 0.12,
-                                ),
-                                new Padding(
-                                  padding: new EdgeInsets.only(top: 6.0),
-                                  child: new Text(item['label']),
-                                )
-                              ],
+                                  new Padding(
+                                    padding: new EdgeInsets.only(top: 6.0),
+                                    child: new Text(item['label']),
+                                  )
+                                ],
+                              ),
                             ),
                           );
                         }).toList(),
