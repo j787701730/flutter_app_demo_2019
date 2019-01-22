@@ -13,9 +13,9 @@ class _SearchBarDemoState extends State<ShopScreen> {
 //          IconButton(
 //              icon: Icon(Icons.search),
 //              onPressed: () {
-//                showSearch(context: context, delegate: searchBarDelegate());
+//                showSearch(context: context, delegate: SearchBarDelegate());
 //              }
-//              // showSearch(context:context,delegate: searchBarDelegate()),
+//              // showSearch(context:context,delegate: SearchBarDelegate()),
 //              ),
 //        ]),
         body: Container(
@@ -26,9 +26,9 @@ class _SearchBarDemoState extends State<ShopScreen> {
               IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    showSearch(context: context, delegate: searchBarDelegate());
+                    showSearch(context: context, delegate: SearchBarDelegate());
                   }
-                  // showSearch(context:context,delegate: searchBarDelegate()),
+                  // showSearch(context:context,delegate: SearchBarDelegate()),
                   ),
             ],
             title: Text('CustomScrollView'),

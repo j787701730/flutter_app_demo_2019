@@ -86,7 +86,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
         IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              showSearch(context: context, delegate: searchBarDelegate());
+              showSearch(context: context, delegate: SearchBarDelegate());
             }),
       ]),
       body: ListView(

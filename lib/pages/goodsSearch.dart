@@ -15,11 +15,13 @@ class _GoodsSearch extends State<GoodsSearch> {
   var param = {'curr_page': 1, 'page_count': 6};
   String words = '';
   List goodsData = [];
-  Map shopData = {};
+  var shopData;
+
   int goodsCount = 0;
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
   bool isNotMore = false;
+  bool isPassRequest = false;
 
   _GoodsSearch(this.data);
 
@@ -37,7 +39,7 @@ class _GoodsSearch extends State<GoodsSearch> {
           isPerformingRequest == false &&
           param["curr_page"] < (goodsCount / param["page_count"]).ceil()) {
         setState(() {
-          param["curr_page"] += param["curr_page"];
+          param["curr_page"] = param["curr_page"] + 1;
           isNotMore = false;
           getGoodsSearch(context);
         });
@@ -68,6 +70,7 @@ class _GoodsSearch extends State<GoodsSearch> {
         shopData = data['shop'];
         goodsCount = data['gcount'];
         isPerformingRequest = false;
+        isPassRequest = true;
       });
     }, () {}, context);
   }
@@ -80,15 +83,96 @@ class _GoodsSearch extends State<GoodsSearch> {
           child: ListView(
             controller: _scrollController,
             children: <Widget>[
-//              Container(
-//                child: Text('goods search'),
-//              ),
+              Container(
+                  child: shopData == null
+                      ? Placeholder(
+                          fallbackHeight: 1,
+                          color: Colors.transparent,
+                        )
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                          margin: EdgeInsets.only(bottom: 15),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(color: Color(0xFFEEEEEE)),
+                              position: DecorationPosition.background,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Stack(
+                                      children: <Widget>[
+//                                        FF9C8175
+                                        Container(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: SizedBox(
+                                              width: MediaQuery.of(context).size.width - 20,
+                                              height: 100,
+                                              child: DecoratedBox(decoration: BoxDecoration(color: Color(0xFF9C8175))),
+                                            )),
+                                        Padding(
+                                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                            child: Image.network(
+                                              '$pathName${shopData["shop_logo"]}',
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.contain,
+                                            )),
+                                        Positioned(
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width - 170,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.store_mall_directory,
+                                                  color: Colors.white,
+                                                ),
+                                                Text(
+                                                  shopData['shop_name'],
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(color: Colors.white),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          left: 140,
+                                          top: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )),
               Padding(
                 padding: EdgeInsets.all(10),
                 child: goodsData.length == 0
-                    ? Placeholder(
-                        color: Colors.transparent,
-                      )
+                    ? isPassRequest == false
+                        ? Placeholder(
+                            color: Colors.transparent,
+                          )
+                        : Container(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image.network(
+                                    '${pathName}/assets/8c382430f673ad2237bbf19e5c8a4b00.png',
+                                    width: 200,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 15),
+                                    child: Text('无商品数据'),
+                                  ),
+                                ],
+                              ),
+                            ))
                     : Wrap(
                         children: goodsData.map<Widget>((item) {
                           return Container(
