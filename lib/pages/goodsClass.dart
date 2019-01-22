@@ -6,7 +6,9 @@ class GoodsClass extends StatefulWidget {
 }
 
 class _GoodsClass extends State<GoodsClass> {
-  var goodsClassData = [];
+  List goodsClassData = [];
+  var goodsClassIndex;
+  Map goodsClassItem = {};
 
   @override
   void initState() {
@@ -17,9 +19,10 @@ class _GoodsClass extends State<GoodsClass> {
 
   getGoodsClass(context) {
     ajax('Goods/getGoodsClass', '', false, (data) {
-      print(data);
       setState(() {
         goodsClassData = data['goodsClass'];
+        goodsClassIndex = data['goodsClass'][0]['value'];
+        goodsClassItem = data['goodsClass'][0];
       });
     }, () {}, context);
   }
@@ -27,15 +30,8 @@ class _GoodsClass extends State<GoodsClass> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//        appBar: AppBar(title: Text('SearchBarDemo'), actions: <Widget>[
-//          IconButton(
-//              icon: Icon(Icons.search),
-//              onPressed: () {
-//                showSearch(context: context, delegate: searchBarDelegate());
-//              }
-//              // showSearch(context:context,delegate: searchBarDelegate()),
-//              ),
-//        ]),
+        appBar: AppBar(title: Text('分类'), actions: <Widget>[
+        ]),
         body: SafeArea(
             child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,23 +46,78 @@ class _GoodsClass extends State<GoodsClass> {
                   children: goodsClassData.map<Widget>((item) {
                     return GestureDetector(
                       child: DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0x00000000)),
+                        decoration: BoxDecoration(
+                            color: goodsClassIndex == item['value'] ? Color(0x00000000) : Color(0x15658734)),
                         child: Container(
-                          padding: EdgeInsets.only(top: 10, bottom: 10, left: 8),
+                          padding: EdgeInsets.only(top: 20, bottom: 20, left: 8),
                           child: Row(
-                            children: <Widget>[Image.network('$pathName${item["pc_logo"]}'), Text(item['label'])],
+                            children: <Widget>[
+                              Image.network(
+                                '$pathName${item["pc_logo"]}',
+                                width: 25,
+                                height: 25,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 4),
+                                child: Text(
+                                  item['label'],
+                                  style: TextStyle(
+                                    color: goodsClassIndex == item['value'] ? Colors.red : Colors.black
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
                       onTap: () {
-                        print(item['value']);
+                        setState(() {
+                          goodsClassIndex = item['value'];
+                          goodsClassItem = item;
+                        });
                       },
                     );
                   }).toList(),
                 )),
         ),
         Expanded(
-          child: Text('内容'),
+          child: goodsClassItem.length == 0
+              ? Placeholder(
+                  color: Colors.transparent,
+                )
+              : Container(
+                  padding: EdgeInsets.only(left: 6, right: 6),
+                  child: ListView(
+                    children: <Widget>[
+                      Image.network(
+                        '$pathName${goodsClassItem['b_logo']}',
+                        height: (MediaQuery.of(context).size.width - 120 - 12) / 748 * 350,
+                        fit: BoxFit.fill,
+                      ),
+                      Wrap(
+                        children: goodsClassItem['children'].map<Widget>((item) {
+                          return SizedBox(
+                            width: (MediaQuery.of(context).size.width - 120 - 12) / 3,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Column(
+                                children: <Widget>[
+                                  Image.network(
+                                    '$pathName${item["pc_logo"]}',
+                                    fit: BoxFit.fill,
+                                    width: (MediaQuery.of(context).size.width - 120 - 12) / 3 - 10,
+                                    height: (MediaQuery.of(context).size.width - 120 - 12) / 3 - 10,
+                                  ),
+                                  Text(item['label'])
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                ),
         )
       ],
     )));
