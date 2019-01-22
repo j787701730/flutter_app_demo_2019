@@ -4,6 +4,7 @@ import 'package:flutter_app_demo/util/util.dart';
 import 'searchBar.dart';
 import 'goodsDesc.dart';
 import 'goodsClass.dart';
+import 'goodsSearch.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -134,9 +135,9 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                     return new GoodsClass();
                                   }));
                                 } else {
-//                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-//                                    return new GoodsClass(item['value']);
-//                                  }));
+                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+                                    return new GoodsSearch({'classID': item['value']});
+                                  }));
                                 }
                               },
                               child: new Column(
