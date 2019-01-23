@@ -151,7 +151,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                     width: MediaQuery.of(context).size.width * 0.12,
                                   ),
                                   new Padding(
-                                    padding: new EdgeInsets.only(top: 6.0),
+                                    padding: new EdgeInsets.only(top: 6.0, bottom: 8),
                                     child: new Text(item['label']),
                                   )
                                 ],

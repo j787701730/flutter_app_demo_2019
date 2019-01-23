@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'shopNav.dart';
 
 class GoodsDesc extends StatefulWidget {
   final title;
@@ -19,12 +20,15 @@ class _GoodsDesc extends State<GoodsDesc> {
   final title;
   final goodsID;
   Map goodsData = {};
+  List hotSale = [];
+  Map shopInfo = {};
 
   _GoodsDesc(this.title, this.goodsID);
 
   @override
   initState() {
     getDesc();
+    getShopInfo();
     super.initState();
   }
 
@@ -36,9 +40,27 @@ class _GoodsDesc extends State<GoodsDesc> {
     }, () {}, context);
   }
 
+  getShopInfo() {
+    ajax(
+        'shops/info',
+        {
+          'goods_id': goodsID,
+          'getExt': ["hot_sale", "shop"]
+        },
+        false, (data) {
+      setState(() {
+        hotSale = data['hot_sale'];
+        shopInfo = data['shop'];
+      });
+    }, () {}, context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
       body: ListView(
         children: <Widget>[
           Container(
@@ -68,8 +90,9 @@ class _GoodsDesc extends State<GoodsDesc> {
                   fallbackHeight: 100.0,
                   color: Colors.transparent,
                 )
-              : Align(
+              : Container(
                   alignment: FractionalOffset.bottomLeft,
+                  padding: EdgeInsets.only(top: 10, bottom: 6),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -110,7 +133,18 @@ class _GoodsDesc extends State<GoodsDesc> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ))
+                )),
+          Container(
+            height: 4,
+            margin: EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(color: Colors.black26),
+          ),
+          ShopNav(shopInfo),
+          Container(
+            height: 1,
+            margin: EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(color: Colors.black26),
+          )
         ],
       ),
     );
