@@ -38,84 +38,81 @@ class _GoodsDesc extends State<GoodsDesc> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: ListView(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.width,
-              child: Swiper(
-                autoplay: true,
-                itemBuilder: (c, index) {
-                  return (goodsData.length == 0
-                      ? new Placeholder(
-                          fallbackWidth: 100.0,
-                          fallbackHeight: 100.0,
-                          color: Colors.transparent,
-                        )
-                      : new Image.network(
-                          "$pathName${goodsData['goods_pics'][index]['file_path']}",
-                          fit: BoxFit.contain,
-                        ));
-                },
-                itemCount: goodsData.length == 0 ? 1 : goodsData['goods_pics'].length,
-                pagination: new SwiperPagination(),
-                control: new SwiperControl(),
-              ),
+    return Scaffold(
+      body: ListView(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.width,
+            child: Swiper(
+              autoplay: true,
+              itemBuilder: (c, index) {
+                return (goodsData.length == 0
+                    ? new Placeholder(
+                        fallbackWidth: 100.0,
+                        fallbackHeight: 100.0,
+                        color: Colors.transparent,
+                      )
+                    : new Image.network(
+                        "$pathName${goodsData['goods_pics'][index]['file_path']}",
+                        fit: BoxFit.contain,
+                      ));
+              },
+              itemCount: goodsData.length == 0 ? 1 : goodsData['goods_pics'].length,
+              pagination: new SwiperPagination(),
+              control: new SwiperControl(),
             ),
-            (goodsData.length == 0
-                ? Placeholder(
-                    fallbackWidth: 100.0,
-                    fallbackHeight: 100.0,
-                    color: Colors.transparent,
-                  )
-                : Align(
-                    alignment: FractionalOffset.bottomLeft,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            '￥${goodsData['goods_price']}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
+          ),
+          (goodsData.length == 0
+              ? Placeholder(
+                  fallbackWidth: 100.0,
+                  fallbackHeight: 100.0,
+                  color: Colors.transparent,
+                )
+              : Align(
+                  alignment: FractionalOffset.bottomLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          '￥${goodsData['goods_price']}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 6),
-                          child: Text(
-                            '￥${goodsData['goods_org_price']}',
-                            style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
-                              decorationStyle: TextDecorationStyle.solid,
-                            ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 6),
+                        child: Text(
+                          '￥${goodsData['goods_org_price']}',
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            decorationStyle: TextDecorationStyle.solid,
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            (goodsData.length == 0
-                ? Placeholder(
-                    fallbackWidth: 100.0,
-                    fallbackHeight: 100.0,
-                    color: Colors.transparent,
-                  )
-                : Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      goodsData['goods_name'],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
-          ],
-        ),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+          (goodsData.length == 0
+              ? Placeholder(
+                  fallbackWidth: 100.0,
+                  fallbackHeight: 100.0,
+                  color: Colors.transparent,
+                )
+              : Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    goodsData['goods_name'],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ))
+        ],
       ),
-      theme: new ThemeData(platform: TargetPlatform.iOS),
     );
   }
 }

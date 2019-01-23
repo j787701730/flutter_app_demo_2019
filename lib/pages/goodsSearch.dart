@@ -12,10 +12,11 @@ class GoodsSearch extends StatefulWidget {
 
 class _GoodsSearch extends State<GoodsSearch> {
   final data;
-  var param = {'curr_page': 1, 'page_count': 6};
+  Map param = {'curr_page': '1', 'page_count': '6'};
   String words = '';
   List goodsData = [];
   var shopData;
+  String orderPrice = 'goods_price desc';
 
   int goodsCount = 0;
   ScrollController _scrollController = new ScrollController();
@@ -29,7 +30,7 @@ class _GoodsSearch extends State<GoodsSearch> {
   void initState() {
     // TODO: implement initState
     if (data['classID'] != null) {
-      param['class_id'] = data['classID'];
+      param['class_id'] = data['classID'].toString();
     } else if (data['words'] != null) {
       words = data['words'];
     }
@@ -37,13 +38,13 @@ class _GoodsSearch extends State<GoodsSearch> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent &&
           isPerformingRequest == false &&
-          param["curr_page"] < (goodsCount / param["page_count"]).ceil()) {
+          int.parse(param["curr_page"]) < (goodsCount / int.parse(param["page_count"])).ceil()) {
         setState(() {
-          param["curr_page"] = param["curr_page"] + 1;
+          param["curr_page"] = (int.parse(param["curr_page"]) + 1).toString();
           isNotMore = false;
           getGoodsSearch(context);
         });
-      } else if (param["curr_page"] == (goodsCount / param["page_count"]).ceil() &&
+      } else if (int.parse(param["curr_page"]) == (goodsCount / int.parse(param["page_count"])).ceil() &&
           _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         setState(() {
           isNotMore = true;
@@ -63,6 +64,7 @@ class _GoodsSearch extends State<GoodsSearch> {
   getGoodsSearch(context) {
     setState(() {
       isPerformingRequest = true;
+      isPassRequest = false;
     });
     ajax('Search/keyWords', {'gParam': param, 'words': words}, false, (data) {
       setState(() {
@@ -149,6 +151,88 @@ class _GoodsSearch extends State<GoodsSearch> {
                             ),
                           ),
                         )),
+              Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 20) / 4,
+                      child: FlatButton(
+                        onPressed: () {
+                          setState(() {
+                            param.remove('order');
+                            param['curr_page'] = '1';
+                            goodsData = [];
+                            getGoodsSearch(context);
+                          });
+                        },
+                        child: Text('综合', style: TextStyle(color: param['order'] == null ? Colors.red : Colors.black)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 20) / 4,
+                      child: FlatButton(
+                        onPressed: () {
+                          param['curr_page'] = '1';
+                          param['order'] = 'sales_volume';
+                          goodsData = [];
+                          getGoodsSearch(context);
+                        },
+                        child: Text('销量',
+                            style: TextStyle(color: param['order'] == 'sales_volume' ? Colors.red : Colors.black)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 20) / 4,
+                      child: FlatButton(
+                        onPressed: () {
+                          param['curr_page'] = '1';
+                          param['order'] = 'browse_times';
+                          goodsData = [];
+                          getGoodsSearch(context);
+                        },
+                        child: Text(
+                          '人气',
+                          style: TextStyle(color: param['order'] == 'browse_times' ? Colors.red : Colors.black),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 20) / 4,
+                      child: FlatButton(
+                        onPressed: () {
+                          param['curr_page'] = '1';
+                          if (orderPrice == 'goods_price desc') {
+                            param['order'] = 'goods_price';
+                            orderPrice = 'goods_price';
+                          } else {
+                            param['order'] = 'goods_price desc';
+                            orderPrice = 'goods_price desc';
+                          }
+                          goodsData = [];
+                          getGoodsSearch(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text('价格',
+                                style: TextStyle(
+                                    color: param['order'] == 'goods_price desc' || param['order'] == 'goods_price'
+                                        ? Colors.red
+                                        : Colors.black)),
+                            Icon(
+                              orderPrice == 'goods_price desc' ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                              color: param['order'] == 'goods_price desc' || param['order'] == 'goods_price'
+                                  ? Colors.red
+                                  : Colors.black,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.all(10),
                 child: goodsData.length == 0
@@ -228,7 +312,7 @@ class _GoodsSearch extends State<GoodsSearch> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 4, bottom: 4),
-                child: isNotMore == true
+                child: isNotMore == true && isPassRequest == true
                     ? Center(
                         child: Text(
                           '没有更多了',
