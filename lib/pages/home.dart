@@ -114,7 +114,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
           ),
           Container(
             padding: EdgeInsets.fromLTRB(0, 12, 0, 0),
-            height: MediaQuery.of(context).size.width / 5 * 2 + 24,
+            height: MediaQuery.of(context).size.width / 5 * 2 + 32,
             child: Swiper(
               itemBuilder: (c, index) {
                 return (goodsClass.length == 0

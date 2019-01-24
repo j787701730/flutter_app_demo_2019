@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_app_demo/util/util.dart';
+import 'shopNav.dart';
+import 'goodsDesc.dart';
+
+class ShopDesc extends StatefulWidget {
+  final data;
+
+  ShopDesc(this.data);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return new _ShopDesc(data);
+  }
+}
+
+class _ShopDesc extends State<ShopDesc> {
+  final data;
+
+  _ShopDesc(this.data);
+
+  List hotSale = [];
+  Map shopInfo = {};
+  Map param = {'curr_page': '1', 'page_count': '6'};
+  String words = '';
+  var shopData;
+
+  bool isPerformingRequest = true;
+
+  @override
+  initState() {
+    getShopInfo();
+    super.initState();
+  }
+
+  getShopInfo() {
+    setState(() {
+      isPerformingRequest = true;
+    });
+    ajax(
+        'shops/info',
+        {
+          'shop_id': data['shop_id'],
+          'getExt': ["hot_sale", "shop"]
+        },
+        false, (data) {
+      setState(() {
+        hotSale = data['hot_sale'];
+        shopInfo = data['shop'];
+        isPerformingRequest = false;
+      });
+    }, () {}, context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(data['shop_name']),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ShopNav(shopInfo, isNotJumpShopDesc: true),
+          Container(
+            height: 1,
+            decoration: BoxDecoration(color: Colors.black26),
+          ),
+          Center(
+            child: isPerformingRequest == true
+                ? Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator())
+                : Placeholder(
+                    color: Colors.transparent,
+                    fallbackHeight: 1,
+                  ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: shopInfo.length == 0
+                ? Placeholder(
+                    fallbackHeight: 1,
+                    color: Colors.transparent,
+                  )
+                : Column(
+                    children: shopInfo['shop_pics'].keys.map<Widget>((item) {
+                      return Image.network("$pathName${shopInfo['shop_pics'][item]['file_path']}");
+                    }).toList(),
+                  ),
+          ),
+          Container(
+            height: 1,
+            color: Colors.black26,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '工作时间',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 16, top: 6),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        '周一至周五 9:00 - 20:00',
+                        style: TextStyle(color: Colors.black26),
+                      ),
+                      Text(
+                        '周一至周五 9:00 - 20:00',
+                        style: TextStyle(color: Colors.black26),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10, left: 10),
+            child: Wrap(
+              children: <Widget>[
+                Text(
+                  '地址：${shopInfo['shop_address']}',
+                  style: TextStyle(color: Colors.black26),
+                ),
+                Icon(
+                  Icons.location_on,
+                  color: Colors.black26,
+                  size: 14,
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

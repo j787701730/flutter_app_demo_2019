@@ -36,7 +36,6 @@ class _ShopIndex extends State<ShopIndex> {
 
   @override
   initState() {
-//    getDesc();
     getShopInfo();
     getGoodsList();
     _scrollController.addListener(() {
@@ -97,15 +96,14 @@ class _ShopIndex extends State<ShopIndex> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text(data['shop_name']),
       ),
       body: ListView(
         controller: _scrollController,
         children: <Widget>[
-          ShopNav(shopInfo),
+          ShopNav(shopInfo, isNotJumpShopIndex: true),
           Container(
             padding: EdgeInsets.only(left: 10, right: 10),
             child: Row(
@@ -128,10 +126,12 @@ class _ShopIndex extends State<ShopIndex> {
                   width: (MediaQuery.of(context).size.width - 20) / 4,
                   child: FlatButton(
                     onPressed: () {
-                      param['curr_page'] = '1';
-                      param['order'] = 'sales_volume';
-                      goodsData = [];
-                      getGoodsList();
+                      setState(() {
+                        param['curr_page'] = '1';
+                        param['order'] = 'sales_volume';
+                        goodsData = [];
+                        getGoodsList();
+                      });
                     },
                     child: Text('销量',
                         style: TextStyle(color: param['order'] == 'sales_volume' ? Colors.red : Colors.black)),
@@ -141,10 +141,12 @@ class _ShopIndex extends State<ShopIndex> {
                   width: (MediaQuery.of(context).size.width - 20) / 4,
                   child: FlatButton(
                     onPressed: () {
-                      param['curr_page'] = '1';
-                      param['order'] = 'browse_times';
-                      goodsData = [];
-                      getGoodsList();
+                      setState(() {
+                        param['curr_page'] = '1';
+                        param['order'] = 'browse_times';
+                        goodsData = [];
+                        getGoodsList();
+                      });
                     },
                     child: Text(
                       '人气',
@@ -192,12 +194,13 @@ class _ShopIndex extends State<ShopIndex> {
             height: 1,
             decoration: BoxDecoration(color: Colors.black26),
           ),
-          Padding(
+          Container(
             padding: EdgeInsets.all(10),
             child: goodsData.length == 0
                 ? isPassRequest == false
                     ? Placeholder(
                         color: Colors.transparent,
+                        fallbackHeight: 1,
                       )
                     : Container(
                         padding: EdgeInsets.only(top: 100),
@@ -269,6 +272,14 @@ class _ShopIndex extends State<ShopIndex> {
                     }).toList(),
                   ),
           ),
+          Center(
+            child: isPerformingRequest == true
+                ? Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator())
+                : Placeholder(
+                    color: Colors.transparent,
+                    fallbackHeight: 100,
+                  ),
+          ),
           Padding(
             padding: EdgeInsets.only(top: 4, bottom: 4),
             child: isNotMore == true && isPassRequest == true
@@ -278,18 +289,13 @@ class _ShopIndex extends State<ShopIndex> {
                       style: TextStyle(color: Colors.black38),
                     ),
                   )
-                : Text(''),
-          ),
-          Center(
-            child: isPerformingRequest == true
-                ? CircularProgressIndicator()
                 : Placeholder(
-                    color: Colors.transparent,
                     fallbackHeight: 1,
+                    color: Colors.transparent,
                   ),
-          )
+          ),
         ],
       ),
-    ));
+    );
   }
 }
