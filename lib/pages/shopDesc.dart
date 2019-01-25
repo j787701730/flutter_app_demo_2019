@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
-import 'package:amap_base/amap_base.dart';
+import 'package:amap_base_map/amap_base_map.dart';
 
 class ShopDesc extends StatefulWidget {
   final data;

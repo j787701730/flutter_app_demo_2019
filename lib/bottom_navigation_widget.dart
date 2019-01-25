@@ -18,9 +18,9 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> with Si
 
   @override
   void initState() {
-    list..add(HomeScreen())..add(UserScreen())..add(ShopScreen())..add(AdminScreen());
+//    list..add(HomeScreen())..add(UserScreen())..add(ShopScreen())..add(AdminScreen());
     _tabController = TabController(
-      length: list.length,
+      length: 4,
       vsync: this,
     );
     super.initState();
