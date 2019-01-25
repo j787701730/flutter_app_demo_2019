@@ -59,7 +59,6 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
           newClass[i].add(fullClass);
         }
       }
-
       if (len > 1) {
         for (var i = 0; i < len; i += 1) {
           cls(i);
