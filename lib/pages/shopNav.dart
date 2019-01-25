@@ -100,7 +100,7 @@ class ShopNav extends StatelessWidget {
                         onPressed: () {
                           if(isNotJumpShopDesc != true){
                             Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                              return new ShopDesc({'shop_id': shopInfo['shop_id'], 'shop_name': shopInfo['shop_name']});
+                              return new ShopDesc(shopInfo);
                             }));
                           }
                         },

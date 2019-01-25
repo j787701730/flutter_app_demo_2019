@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'goodsDesc.dart';
+import 'shopIndex.dart';
 
 class GoodsSearch extends StatefulWidget {
   final data;
@@ -94,7 +95,11 @@ class _GoodsSearch extends State<GoodsSearch> {
                       padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
                       margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+                            return new ShopIndex(shopData);
+                          }));
+                        },
                         child: DecoratedBox(
                           decoration: BoxDecoration(color: Color(0xFFEEEEEE)),
                           position: DecorationPosition.background,

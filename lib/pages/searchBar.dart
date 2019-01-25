@@ -13,7 +13,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
       IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
-            Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+            Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_) {
               return new GoodsSearch({'words': query});
             }));
           })

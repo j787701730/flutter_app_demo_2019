@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
-import 'goodsDesc.dart';
+import 'package:amap_base/amap_base.dart';
 
 class ShopDesc extends StatefulWidget {
   final data;
@@ -16,48 +16,55 @@ class ShopDesc extends StatefulWidget {
 }
 
 class _ShopDesc extends State<ShopDesc> {
-  final data;
+  final shopInfo;
+  AMapController _controller;
 
-  _ShopDesc(this.data);
+  _ShopDesc(this.shopInfo);
 
   List hotSale = [];
-  Map shopInfo = {};
-  Map param = {'curr_page': '1', 'page_count': '6'};
-  String words = '';
+
+//  Map param = {'curr_page': '1', 'page_count': '6'};
+//  String words = '';
   var shopData;
 
-  bool isPerformingRequest = true;
+//  bool isPerformingRequest = true;
 
   @override
   initState() {
-    getShopInfo();
+//    getShopInfo();
     super.initState();
   }
 
-  getShopInfo() {
-    setState(() {
-      isPerformingRequest = true;
-    });
-    ajax(
-        'shops/info',
-        {
-          'shop_id': data['shop_id'],
-          'getExt': ["hot_sale", "shop"]
-        },
-        false, (data) {
-      setState(() {
-        hotSale = data['hot_sale'];
-        shopInfo = data['shop'];
-        isPerformingRequest = false;
-      });
-    }, () {}, context);
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
+
+//  getShopInfo() {
+//    setState(() {
+//      isPerformingRequest = true;
+//    });
+//    ajax(
+//        'shops/info',
+//        {
+//          'shop_id': data['shop_id'],
+//          'getExt': ["hot_sale", "shop"]
+//        },
+//        false, (data) {
+//      setState(() {
+//        hotSale = data['hot_sale'];
+//        shopInfo = data['shop'];
+//        isPerformingRequest = false;
+//      });
+//    }, () {}, context);
+//  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(data['shop_name']),
+        title: Text(shopInfo['shop_name']),
       ),
       body: ListView(
         children: <Widget>[
@@ -66,26 +73,13 @@ class _ShopDesc extends State<ShopDesc> {
             height: 1,
             decoration: BoxDecoration(color: Colors.black26),
           ),
-          Center(
-            child: isPerformingRequest == true
-                ? Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator())
-                : Placeholder(
-                    color: Colors.transparent,
-                    fallbackHeight: 1,
-                  ),
-          ),
           Padding(
             padding: EdgeInsets.all(10),
-            child: shopInfo.length == 0
-                ? Placeholder(
-                    fallbackHeight: 1,
-                    color: Colors.transparent,
-                  )
-                : Column(
-                    children: shopInfo['shop_pics'].keys.map<Widget>((item) {
-                      return Image.network("$pathName${shopInfo['shop_pics'][item]['file_path']}");
-                    }).toList(),
-                  ),
+            child: Column(
+              children: shopInfo['shop_pics'].keys.map<Widget>((item) {
+                return Image.network("$pathName${shopInfo['shop_pics'][item]['file_path']}");
+              }).toList(),
+            ),
           ),
           Container(
             height: 1,
@@ -120,20 +114,46 @@ class _ShopDesc extends State<ShopDesc> {
           ),
           Container(
             padding: EdgeInsets.only(top: 10, left: 10),
-            child: Wrap(
-              children: <Widget>[
-                Text(
-                  '地址：${shopInfo['shop_address']}',
-                  style: TextStyle(color: Colors.black26),
-                ),
-                Icon(
-                  Icons.location_on,
-                  color: Colors.black26,
-                  size: 14,
-                )
-              ],
+            child: GestureDetector(
+              onTap: () {
+                _controller.addMarker(
+                    MarkerOptions(position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng']))));
+              },
+              child: Wrap(
+                children: <Widget>[
+                  Text(
+                    '地址：${shopInfo['shop_address']}',
+                    style: TextStyle(color: Colors.black26),
+                  ),
+                  Icon(
+                    Icons.location_on,
+                    color: Colors.black26,
+                    size: 14,
+                  )
+                ],
+              ),
             ),
-          )
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height - 250,
+            padding: EdgeInsets.only(top: 10),
+            child: AMapView(
+              onAMapViewCreated: (controller) {
+                setState(() => _controller = controller);
+                _controller.addMarker(MarkerOptions(
+                  position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
+                ));
+              },
+              amapOptions: AMapOptions(
+                zoomControlsEnabled: true,
+                logoPosition: LOGO_POSITION_BOTTOM_LEFT,
+                camera: CameraPosition(
+                  target: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
+                  zoom: 17,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
