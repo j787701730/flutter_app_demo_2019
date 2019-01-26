@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -35,8 +33,10 @@ ajax(String url, Object data, toast, sucFun, failFun, context) async {
 //            contentType: ContentType.json,
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
+              'Cookie':'PHPSESSID=eu0oh9qc53a2iuetq17dt008e3'
               // 'Content-Type': 'application/x-www-form-urlencoded',
-            }));
+            }),
+    );
 
     if (response.data['err_code'] == 0) {
       if (toast == true) {
@@ -47,7 +47,7 @@ ajax(String url, Object data, toast, sucFun, failFun, context) async {
       }
     } else if (response.data['err_code'] == 88888) {
       // 登录处理
-
+      showADialog(context, response.data['err_msg']);
     } else {
       showADialog(context, response.data['err_code']);
       if (failFun != null) {
