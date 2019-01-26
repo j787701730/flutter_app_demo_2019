@@ -69,27 +69,31 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> with Si
 //                Tab(text: '后台管理', icon: Icon(Icons.assessment)),
                 Tab(
                     child: Container(
+                  width: MediaQuery.of(context).size.width / 4,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Icon(Icons.home), Text('首页')],
+                    children: <Widget>[Icon(Icons.home), Text('　首页　')],
                   ),
                 )),
                 Tab(
                   child: Container(
+                      width: MediaQuery.of(context).size.width / 4,
                       child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Icon(Icons.person), Text('个人中心')],
-                  )),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[Icon(Icons.person), Text('个人中心')],
+                      )),
                 ),
                 Tab(
                   child: Container(
+                      width: MediaQuery.of(context).size.width / 4,
                       child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Icon(Icons.store_mall_directory), Text('商家管理')],
-                  )),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[Icon(Icons.store_mall_directory), Text('商家管理')],
+                      )),
                 ),
                 Tab(
                     child: Container(
+                  width: MediaQuery.of(context).size.width / 4,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[Icon(Icons.assessment), Text('后台管理')],
