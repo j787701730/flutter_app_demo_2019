@@ -15,6 +15,9 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
   Map cntData = {};
   var _year;
   var _sales;
+  var _userMonth;
+  var _userNum;
+  int offstageIndex = 0;
 
   @override
   void initState() {
@@ -80,6 +83,29 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     ];
   }
 
+  List<charts.Series<LinearUser, int>> _userData() {
+    List<LinearUser> userData = [
+      new LinearUser(0, 5),
+    ];
+    if (trend.length > 0) {
+      userData.clear();
+      trend['users'].forEach((k, v) {
+//        print(k);
+        userData.add(new LinearUser(int.parse(k), trend['users'][k]));
+      });
+    }
+
+    return [
+      new charts.Series<LinearUser, int>(
+        id: 'Sales',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (LinearUser sales, _) => sales.month,
+        measureFn: (LinearUser sales, _) => sales.num,
+        data: userData,
+      )
+    ];
+  }
+
   _onSelectionChanged(charts.SelectionModel model) {
     final selectedDatum = model.selectedDatum;
 
@@ -95,6 +121,30 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     setState(() {
       _year = time;
       _sales = measures;
+    });
+  }
+
+  _onSelectionChangedUser(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    int time;
+    final measures = <String, num>{};
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.month;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        measures[datumPair.series.displayName] = datumPair.datum.num;
+      });
+    }
+    // Request a build.
+    setState(() {
+      _userMonth = time;
+      _userNum = measures;
+    });
+  }
+
+  changeOffstageIndex(index) {
+    setState(() {
+      offstageIndex = index;
     });
   }
 
@@ -184,10 +234,76 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
                   ),
             // 趋势
             Container(
-              height: 400,
               child: Column(
                 children: <Widget>[
-                  Text('趋势')
+                  Row(
+                    children: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            changeOffstageIndex(0);
+                          },
+                          child: Text(
+                            '用户趋势',
+                            style: TextStyle(color: offstageIndex == 0 ? Colors.red : Colors.black),
+                          )),
+                      FlatButton(
+                          onPressed: () {
+                            changeOffstageIndex(1);
+                          },
+                          child: Text(
+                            '订单趋势',
+                            style: TextStyle(color: offstageIndex == 1 ? Colors.red : Colors.black),
+                          )),
+                      FlatButton(
+                          onPressed: () {
+                            changeOffstageIndex(2);
+                          },
+                          child: Text(
+                            '商品趋势',
+                            style: TextStyle(color: offstageIndex == 2 ? Colors.red : Colors.black),
+                          )),
+                    ],
+                  ),
+                  Offstage(
+                    offstage: offstageIndex == 0 ? false : true,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 300,
+                          child: charts.LineChart(
+                            _userData(),
+                            animate: true,
+                            selectionModels: [
+                              new charts.SelectionModelConfig(
+                                type: charts.SelectionModelType.info, changedListener: _onSelectionChangedUser)
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: _userMonth == null
+                            ? Placeholder(
+                            fallbackHeight: 14,
+                            color: Colors.transparent,
+                          )
+                            : Text('$_userMonth月：${_userNum['Sales']}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Offstage(
+                    offstage: offstageIndex == 1 ? false : true,
+                    child: Container(
+                      height: 300,
+                      child: Text('订单'),
+                    ),
+                  ),
+                  Offstage(
+                    offstage: offstageIndex == 2 ? false : true,
+                    child: Container(
+                      height: 300,
+                      child: Text('商品'),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -743,4 +859,11 @@ class LinearSales {
   final int sales;
 
   LinearSales(this.year, this.sales);
+}
+
+class LinearUser {
+  final int month;
+  final int num;
+
+  LinearUser(this.month, this.num);
 }
