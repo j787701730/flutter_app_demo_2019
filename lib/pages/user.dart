@@ -24,7 +24,6 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
 
   getUserInfo() {
     ajax('user/info', {}, false, (data) {
-      print(data);
       setState(() {
         userInfo = data['data'];
       });
@@ -104,8 +103,6 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
             ? Placeholder()
             : ListView(
                 children: userAsideMenuConfig.map<Widget>((item) {
-                  print(item['icon']);
-//
                   return ExpansionTile(
                     title: Container(
                       child: Row(
