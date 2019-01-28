@@ -116,8 +116,10 @@ class _ShopDesc extends State<ShopDesc> {
             padding: EdgeInsets.only(top: 10, left: 10),
             child: GestureDetector(
               onTap: () {
-                _controller.addMarker(
-                    MarkerOptions(position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng']))));
+
+                  _controller.addMarker(
+                      MarkerOptions(position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng']))));
+
               },
               child: Wrap(
                 children: <Widget>[
@@ -137,10 +139,11 @@ class _ShopDesc extends State<ShopDesc> {
           Container(
             height: MediaQuery.of(context).size.height - 250,
             padding: EdgeInsets.only(top: 10),
-            child: AMapView(
+            child:
+            AMapView(
               onAMapViewCreated: (controller) {
-                setState(() => _controller = controller);
-                _controller.addMarker(MarkerOptions(
+                _controller = controller;
+                controller.addMarker(MarkerOptions(
                   position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
                 ));
               },
@@ -148,7 +151,7 @@ class _ShopDesc extends State<ShopDesc> {
                 zoomControlsEnabled: true,
                 logoPosition: LOGO_POSITION_BOTTOM_LEFT,
                 camera: CameraPosition(
-                  target: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
+//                  target: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
                   zoom: 17,
                 ),
               ),

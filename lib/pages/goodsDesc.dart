@@ -27,9 +27,9 @@ class _GoodsDesc extends State<GoodsDesc> {
 
   @override
   initState() {
+    super.initState();
     getDesc();
     getShopInfo();
-    super.initState();
   }
 
   getDesc() {
@@ -65,24 +65,30 @@ class _GoodsDesc extends State<GoodsDesc> {
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.width,
-            child: Swiper(
-              autoplay: true,
-              itemBuilder: (c, index) {
-                return (goodsData.length == 0
-                    ? new Placeholder(
-                        fallbackWidth: 100.0,
-                        fallbackHeight: 100.0,
-                        color: Colors.transparent,
-                      )
-                    : new Image.network(
-                        "$pathName${goodsData['goods_pics'][index]['file_path']}",
-                        fit: BoxFit.contain,
-                      ));
-              },
-              itemCount: goodsData.length == 0 ? 1 : goodsData['goods_pics'].length,
-              pagination: new SwiperPagination(),
-              control: new SwiperControl(),
-            ),
+            child: goodsData.length == 0
+                ? new Placeholder(
+                    fallbackWidth: 100.0,
+                    fallbackHeight: 100.0,
+                    color: Colors.transparent,
+                  )
+                : Swiper(
+                    autoplay: true,
+                    itemBuilder: (c, index) {
+                      return (goodsData.length == 0
+                          ? new Placeholder(
+                              fallbackWidth: 100.0,
+                              fallbackHeight: 100.0,
+                              color: Colors.transparent,
+                            )
+                          : new Image.network(
+                              "$pathName${goodsData['goods_pics'][index]['file_path']}",
+                              fit: BoxFit.contain,
+                            ));
+                    },
+                    itemCount: goodsData.length == 0 ? 1 : goodsData['goods_pics'].length,
+                    pagination: new SwiperPagination(),
+                    control: new SwiperControl(),
+                  ),
           ),
           (goodsData.length == 0
               ? Placeholder(
