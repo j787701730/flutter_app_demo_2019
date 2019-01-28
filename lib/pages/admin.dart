@@ -7,17 +7,27 @@ class AdminScreen extends StatefulWidget {
   _AdminScreen createState() => _AdminScreen();
 }
 
-class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientMixin
-{
+class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin {
   Map userOrdersData = {};
   Map trend = {};
   Map orderData = {};
   Map cntData = {};
-  var _year;
-  var _sales;
   var _userMonth;
   var _userNum;
+  var _orderMonth;
+  var _orderCnt;
+  var _goodsMonth;
+  var _goodsNum;
+
+  var _pieUserType;
+  var _pieUserNum;
+  var _pieGoodsName;
+  var _pieGoodsNum;
   int offstageIndex = 0;
+
+  Map pieData = {};
+  List activeShops = [];
+  Map param = {'curr_page': 1, 'page_count': 15};
 
   @override
   void initState() {
@@ -25,12 +35,12 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     super.initState();
     getUsersOrders();
     getTrend();
-//    getOrdersData();
-//    getCntsData();
+    getPieData();
+    getActiveShops();
   }
 
-//  @override
-//  bool get wantKeepAlive => true;
+  @override
+  bool get wantKeepAlive => true;
 
   getUsersOrders() {
     ajax('admin.Platform/usersOrdsCnt', {}, false, (data) {
@@ -48,39 +58,21 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     }, () {}, context);
   }
 
-  getOrdersData() {
-    ajax('shops/ordsData', {}, false, (data) {
+  getPieData() {
+    ajax('admin.Platform/pieChart', {}, false, (data) {
       setState(() {
-        orderData = data['ords'];
+        pieData = data['data'];
       });
     }, () {}, context);
   }
 
-  getCntsData() {
-    ajax('shops/cntsData', {}, false, (data) {
+  getActiveShops() {
+    ajax('admin.platForm/activeShops', activeShops, false, (data) {
+      print(data['data']);
       setState(() {
-        cntData = data['cnts'];
+        activeShops = data['data'];
       });
     }, () {}, context);
-  }
-
-  static List<charts.Series<LinearSales, int>> _data() {
-    final data = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
-
-    return [
-      new charts.Series<LinearSales, int>(
-        id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: data,
-      )
-    ];
   }
 
   List<charts.Series<LinearUser, int>> _userData() {
@@ -90,7 +82,6 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     if (trend.length > 0) {
       userData.clear();
       trend['users'].forEach((k, v) {
-//        print(k);
         userData.add(new LinearUser(int.parse(k), trend['users'][k]));
       });
     }
@@ -104,24 +95,6 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
         data: userData,
       )
     ];
-  }
-
-  _onSelectionChanged(charts.SelectionModel model) {
-    final selectedDatum = model.selectedDatum;
-
-    int time;
-    final measures = <String, num>{};
-    if (selectedDatum.isNotEmpty) {
-      time = selectedDatum.first.datum.year;
-      selectedDatum.forEach((charts.SeriesDatum datumPair) {
-        measures[datumPair.series.displayName] = datumPair.datum.sales;
-      });
-    }
-    // Request a build.
-    setState(() {
-      _year = time;
-      _sales = measures;
-    });
   }
 
   _onSelectionChangedUser(charts.SelectionModel model) {
@@ -142,10 +115,218 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
     });
   }
 
+  List<charts.Series<LinearOrder, int>> _orderData() {
+    List<LinearOrder> orderCntData = [
+      new LinearOrder(0, 5),
+    ];
+    List<LinearOrder> orderPriceData = [
+      new LinearOrder(0, 5),
+    ];
+    if (trend.length > 0) {
+      orderCntData.clear();
+      orderPriceData.clear();
+      trend['ord'].forEach((k, v) {
+        orderCntData.add(new LinearOrder(int.parse(k), trend['ord'][k]['cnts']));
+        orderPriceData.add(new LinearOrder(int.parse(k), trend['ord'][k]['order_price']));
+      });
+    }
+
+    return [
+      new charts.Series<LinearOrder, int>(
+        id: 'OrdersCnt',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (LinearOrder orders, _) => orders.month,
+        measureFn: (LinearOrder orders, _) => orders.num,
+        data: orderCntData,
+      ),
+      new charts.Series<LinearOrder, int>(
+        id: 'OrdersPrice',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (LinearOrder orders, _) => orders.month,
+        measureFn: (LinearOrder orders, _) => orders.num,
+        data: orderPriceData,
+      ),
+    ];
+  }
+
+  _onSelectionChangedOrder(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    int time;
+    final measures = <String, num>{};
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.month;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        measures[datumPair.series.displayName] = datumPair.datum.num;
+      });
+    }
+    // Request a build.
+    setState(() {
+      _orderMonth = time;
+      _orderCnt = measures;
+    });
+  }
+
+  List<charts.Series<LinearGoods, int>> _goodsData() {
+    List<LinearGoods> goodsData = [
+      new LinearGoods(0, 5),
+    ];
+    if (trend.length > 0) {
+      goodsData.clear();
+      trend['goods'].forEach((k, v) {
+        goodsData.add(new LinearGoods(int.parse(k), trend['goods'][k]));
+      });
+    }
+
+    return [
+      new charts.Series<LinearGoods, int>(
+        id: 'Goods',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (LinearGoods orders, _) => orders.month,
+        measureFn: (LinearGoods orders, _) => orders.num,
+        data: goodsData,
+      )
+    ];
+  }
+
+  _onSelectionChangedGoods(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    int time;
+    final measures = <String, num>{};
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.month;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        measures[datumPair.series.displayName] = datumPair.datum.num;
+      });
+    }
+    // Request a build.
+    setState(() {
+      _goodsMonth = time;
+      _goodsNum = measures;
+    });
+  }
+
+// 饼图 PieUser
+  List<charts.Series<PieUser, int>> _pieUserData() {
+    List<PieUser> goodsData = [
+      new PieUser(0, 'x', 5),
+    ];
+    if (pieData.length > 0) {
+      goodsData.clear();
+      pieData['user'].forEach((v) {
+        goodsData.add(new PieUser(int.parse(v['id']), v['user_type'], v['cnts']));
+      });
+    }
+
+    return [
+      new charts.Series<PieUser, int>(
+        id: 'PieUser',
+//        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (PieUser orders, _) => orders.id,
+        measureFn: (PieUser orders, _) => orders.num,
+        data: goodsData,
+        labelAccessorFn: (PieUser row, _) => '${row.type}: ${row.num}',
+      )
+    ];
+  }
+
+  _onSelectionChangedPieUser(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    int time;
+    String type;
+    final measures = <String, num>{};
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.id;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        type = datumPair.datum.type;
+        measures[datumPair.series.displayName] = datumPair.datum.num;
+      });
+    }
+//    print(measures);
+    // Request a build.
+    setState(() {
+      _pieUserType = type;
+      _pieUserNum = measures;
+    });
+  }
+
+  List<charts.Series<PieGoods, int>> _pieGoodsData() {
+    List<PieGoods> goodsData = [
+      new PieGoods(0, 'x', 5),
+    ];
+    if (pieData.length > 0) {
+      goodsData.clear();
+      pieData['goods'].forEach((v) {
+        goodsData.add(new PieGoods(v['id'], v['class_name'], v['cnts']));
+      });
+    }
+
+    return [
+      new charts.Series<PieGoods, int>(
+        id: 'PieGoods',
+//        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (PieGoods orders, _) => orders.id,
+        measureFn: (PieGoods orders, _) => orders.num,
+        data: goodsData,
+        labelAccessorFn: (PieGoods row, _) => '${row.name}: ${row.num}',
+      )
+    ];
+  }
+
+  _onSelectionChangedPieGoods(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    int time;
+    String type;
+    final measures = <String, num>{};
+    if (selectedDatum.isNotEmpty) {
+      time = selectedDatum.first.datum.id;
+      selectedDatum.forEach((charts.SeriesDatum datumPair) {
+        type = datumPair.datum.name;
+        measures[datumPair.series.displayName] = datumPair.datum.num;
+      });
+    }
+    // Request a build.
+    setState(() {
+      _pieGoodsName = type;
+      _pieGoodsNum = measures;
+    });
+  }
+
   changeOffstageIndex(index) {
     setState(() {
       offstageIndex = index;
     });
+  }
+
+  _tableRow() {
+    var arr = [
+      TableRow(children: [
+        Container(
+          child: Text(
+            '店铺名称',
+            style: TextStyle(fontSize: 14),
+          ),
+          padding: EdgeInsets.all(4),
+        ),
+        Container(child: Text('成交金额(元)', style: TextStyle(fontSize: 14)), padding: EdgeInsets.all(4))
+      ], decoration: BoxDecoration(color: Color(0xFFEEEEEE))),
+    ];
+    activeShops.forEach((item) {
+      arr.add(TableRow(children: [
+        Container(
+          child: Text(item['shop_name']),
+          padding: EdgeInsets.all(4),
+        ),
+        Container(
+          child: Text('${item['order_price']}'),
+          padding: EdgeInsets.all(4),
+        )
+      ]));
+    });
+    return arr;
   }
 
   @override
@@ -233,338 +414,119 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
                     ),
                   ),
             // 趋势
-            Container(
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      FlatButton(
-                          onPressed: () {
-                            changeOffstageIndex(0);
-                          },
-                          child: Text(
-                            '用户趋势',
-                            style: TextStyle(color: offstageIndex == 0 ? Colors.red : Colors.black),
-                          )),
-                      FlatButton(
-                          onPressed: () {
-                            changeOffstageIndex(1);
-                          },
-                          child: Text(
-                            '订单趋势',
-                            style: TextStyle(color: offstageIndex == 1 ? Colors.red : Colors.black),
-                          )),
-                      FlatButton(
-                          onPressed: () {
-                            changeOffstageIndex(2);
-                          },
-                          child: Text(
-                            '商品趋势',
-                            style: TextStyle(color: offstageIndex == 2 ? Colors.red : Colors.black),
-                          )),
-                    ],
-                  ),
-                  Offstage(
-                    offstage: offstageIndex == 0 ? false : true,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          height: 300,
-                          child: charts.LineChart(
-                            _userData(),
-                            animate: true,
-                            selectionModels: [
-                              new charts.SelectionModelConfig(
-                                type: charts.SelectionModelType.info, changedListener: _onSelectionChangedUser)
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: _userMonth == null
-                            ? Placeholder(
-                            fallbackHeight: 14,
-                            color: Colors.transparent,
-                          )
-                            : Text('$_userMonth月：${_userNum['Sales']}'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Offstage(
-                    offstage: offstageIndex == 1 ? false : true,
-                    child: Container(
-                      height: 300,
-                      child: Text('订单'),
-                    ),
-                  ),
-                  Offstage(
-                    offstage: offstageIndex == 2 ? false : true,
-                    child: Container(
-                      height: 300,
-                      child: Text('商品'),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-//          订单
-            orderData.length == 0
+            trend.length == 0
                 ? Center(
                     child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                   )
                 : Container(
-                    padding: EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  changeOffstageIndex(0);
+                                },
+                                child: Text(
+                                  '用户趋势',
+                                  style: TextStyle(color: offstageIndex == 0 ? Colors.red : Colors.black),
+                                )),
+                            FlatButton(
+                                onPressed: () {
+                                  changeOffstageIndex(1);
+                                },
+                                child: Text(
+                                  '订单趋势',
+                                  style: TextStyle(color: offstageIndex == 1 ? Colors.red : Colors.black),
+                                )),
+                            FlatButton(
+                                onPressed: () {
+                                  changeOffstageIndex(2);
+                                },
+                                child: Text(
+                                  '商品趋势',
+                                  style: TextStyle(color: offstageIndex == 2 ? Colors.red : Colors.black),
+                                )),
+                          ],
+                        ),
                         Container(
+                          height: 1,
+                          color: Colors.black26,
+                        ),
+                        Offstage(
+                          offstage: offstageIndex == 0 ? false : true,
                           child: Column(
                             children: <Widget>[
-                              Text('店铺订单趋势分析'),
                               Container(
                                 height: 300,
                                 child: charts.LineChart(
-                                  _data(),
+                                  _userData(),
                                   animate: true,
                                   selectionModels: [
                                     new charts.SelectionModelConfig(
-                                        type: charts.SelectionModelType.info, changedListener: _onSelectionChanged)
+                                        type: charts.SelectionModelType.info, changedListener: _onSelectionChangedUser)
                                   ],
                                 ),
                               ),
                               Container(
-                                child: _year == null
+                                child: _userMonth == null
                                     ? Placeholder(
                                         fallbackHeight: 14,
                                         color: Colors.transparent,
                                       )
-                                    : Text('$_year月：${_sales['Sales']}'),
+                                    : Text('$_userMonth月：${_userNum['Sales']}'),
                               ),
+                            ],
+                          ),
+                        ),
+                        Offstage(
+                          offstage: offstageIndex == 1 ? false : true,
+                          child: Column(
+                            children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Wrap(
-                                  children: <Widget>[
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.sentiment_satisfied,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '昨日订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['yesterdayCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.sentiment_dissatisfied,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '今日订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['todayCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.score,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '上周订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['lastWeekCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.score,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '本周订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['weekCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.score,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '上月订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['lastMonthCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width / 2 - 10,
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: 60,
-                                            height: 60,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                color: Color(0xFFEFF6FF)),
-                                            child: Icon(
-                                              Icons.score,
-                                              size: 40,
-                                              color: Color(0xFF66AAFF),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  '本月订单',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  '${orderData['monthCnts']}',
-                                                  style: TextStyle(fontSize: 30),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 1,
-                                      color: Colors.black26,
-                                      margin: EdgeInsets.only(top: 10, bottom: 10),
-                                    )
+                                height: 300,
+                                child: charts.LineChart(
+                                  _orderData(),
+                                  animate: true,
+                                  selectionModels: [
+                                    new charts.SelectionModelConfig(
+                                        type: charts.SelectionModelType.info, changedListener: _onSelectionChangedOrder)
                                   ],
                                 ),
+                              ),
+                              Container(
+                                child: _orderMonth == null
+                                    ? Placeholder(
+                                        fallbackHeight: 14,
+                                        color: Colors.transparent,
+                                      )
+                                    : Text('$_orderMonth月：${_orderCnt['OrdersCnt']} ￥${_orderCnt['OrdersPrice']}'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Offstage(
+                          offstage: offstageIndex == 2 ? false : true,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: 300,
+                                child: charts.LineChart(
+                                  _goodsData(),
+                                  animate: true,
+                                  selectionModels: [
+                                    new charts.SelectionModelConfig(
+                                        type: charts.SelectionModelType.info, changedListener: _onSelectionChangedGoods)
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: _goodsMonth == null
+                                    ? Placeholder(
+                                        fallbackHeight: 14,
+                                        color: Colors.transparent,
+                                      )
+                                    : Text('$_goodsMonth月：${_goodsNum['Goods']}'),
                               ),
                             ],
                           ),
@@ -572,248 +534,108 @@ class _AdminScreen extends State<AdminScreen> //  with AutomaticKeepAliveClientM
                       ],
                     ),
                   ),
-            // 统计
-            cntData.length == 0
-                ? Center(
-                    child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
-                  )
-                : Container(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
+            // 饼图
+            Container(
+              child: userOrdersData.length == 0
+                  ? Center(
+                      child:
+                          Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+                    )
+                  : Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Column(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '用户分布',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          Container(
+                            height: 300,
+                            child: charts.PieChart(_pieUserData(),
+                                animate: false,
+                                selectionModels: [
+                                  new charts.SelectionModelConfig(
+                                      type: charts.SelectionModelType.info, changedListener: _onSelectionChangedPieUser)
+                                ],
+                                defaultRenderer: new charts.ArcRendererConfig(arcRendererDecorators: [
+                                  new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)
+                                ])),
+                          ),
+                          Container(
+                            child: _pieUserType == null
+                                ? Placeholder(
+                                    fallbackHeight: 14,
+                                    color: Colors.transparent,
+                                  )
+                                : Text('$_pieUserType：${_pieUserNum['PieUser']}'),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+            Container(
+              child: userOrdersData.length == 0
+                  ? Center(
+                      child:
+                          Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+                    )
+                  : Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Column(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('商品分布', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                          Container(
+                            height: 300,
+                            child: charts.PieChart(
+                              _pieGoodsData(),
+                              animate: false,
+                              selectionModels: [
+                                new charts.SelectionModelConfig(
+                                    type: charts.SelectionModelType.info, changedListener: _onSelectionChangedPieGoods)
+                              ],
+                              defaultRenderer: new charts.ArcRendererConfig(arcRendererDecorators: [
+                                new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)
+                              ]),
+                            ),
+                          ),
+                          Container(
+                            child: _pieGoodsName == null
+                                ? Placeholder(
+                                    fallbackHeight: 14,
+                                    color: Colors.transparent,
+                                  )
+                                : Text('$_pieGoodsName：${_pieGoodsNum['PieGoods']}'),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 10),
+              child: Text('本月最活跃商家', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+              child: activeShops.length == 0
+                  ? Center(
+                      child:
+                          Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
+                    )
+                  : Column(
                       children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                              color: Color(0xFF31B48D)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    '商品统计',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text('24H', style: TextStyle(color: Colors.white))
-                                ],
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  '${cntData['goodsCnts']['cnts'] == null ? 0 : cntData['goodsCnts']['cnts']}',
-                                  style: TextStyle(color: Colors.white, fontSize: 30),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(bottom: 6),
-                                child: Text(
-                                  '上架-${cntData['goodsCnts']['1'] == null ? 0 : cntData['goodsCnts']['1']} 下架-${cntData['goodsCnts']['0'] == null ? 0 : cntData['goodsCnts']['0']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              Container(
-                                child: Text(
-                                  '请注意及时上架商品',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(top: 15),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                              color: Color(0xFF38A1F2)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    '订单统计',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text('24H', style: TextStyle(color: Colors.white))
-                                ],
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  '${cntData['orderCnts']['cnts'] == null ? 0 : cntData['orderCnts']['cnts']}',
-                                  style: TextStyle(color: Colors.white, fontSize: 30),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(bottom: 6),
-                                child: Text(
-                                  '总金额 ￥${cntData['orderCnts']['order_price'] == null ? 0 : cntData['orderCnts']['order_price']}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                child: Text(
-                                  '请及时核对订单信息',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(top: 15),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                              color: Color(0xFF7538C7)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    '金融申请',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text('实时', style: TextStyle(color: Colors.white))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                      top: 10,
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          '${cntData['financial'] == null ? "无" : cntData['financial']['financial_party']}',
-                                          style: TextStyle(color: Colors.white, fontSize: 30),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                                          child: Text(
-                                            '申请状态',
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                      padding: EdgeInsets.only(
-                                        top: 10,
-                                      ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                            '${cntData['financial'] == null ? "无" : cntData['financial']['audit_state'] == 1 ? "通过" : "不通过"}',
-                                            style: TextStyle(color: Colors.white, fontSize: 30),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              '审核状态',
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          )
-                                        ],
-                                      ))
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(top: 15),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                              color: Color(0xFF3B67A4)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    '文章统计',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  Text('24H', style: TextStyle(color: Colors.white))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                      top: 10,
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          '${cntData['articleCnts'] == null ? 0 : cntData['articleCnts']['cnts']}',
-                                          style: TextStyle(color: Colors.white, fontSize: 30),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                                          child: Text(
-                                            '文章总量',
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                      padding: EdgeInsets.only(
-                                        top: 10,
-                                      ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                            '${cntData['articleCnts'] == null ? 0 : cntData['articleCnts']['cnts']}',
-                                            style: TextStyle(color: Colors.white, fontSize: 30),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              '评论总量',
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          )
-                                        ],
-                                      ))
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-//                Container(
-//                  height: 1,
-//                  color: Colors.black26,
-//                  margin: EdgeInsets.all(10),
-//                )
+                        Table(
+                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                          children: _tableRow(),
+                          border: TableBorder.all(color: Colors.black26),
+                        )
                       ],
                     ),
-                  ),
+            ),
+            Container(
+              height: 20,
+            )
           ],
         ),
       ),
@@ -866,4 +688,34 @@ class LinearUser {
   final int num;
 
   LinearUser(this.month, this.num);
+}
+
+class LinearOrder {
+  final int month;
+  final int num;
+
+  LinearOrder(this.month, this.num);
+}
+
+class LinearGoods {
+  final int month;
+  final int num;
+
+  LinearGoods(this.month, this.num);
+}
+
+class PieUser {
+  final String type;
+  final int num;
+  final int id;
+
+  PieUser(this.id, this.type, this.num);
+}
+
+class PieGoods {
+  final String name;
+  final int num;
+  final int id;
+
+  PieGoods(this.id, this.name, this.num);
 }
