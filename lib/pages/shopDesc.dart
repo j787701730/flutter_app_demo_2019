@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
-import 'package:amap_base_map/amap_base_map.dart';
+//import 'package:amap_base_map/amap_base_map.dart';
 
 class ShopDesc extends StatefulWidget {
   final data;
@@ -17,7 +17,8 @@ class ShopDesc extends StatefulWidget {
 
 class _ShopDesc extends State<ShopDesc> {
   final shopInfo;
-  AMapController _controller;
+
+//  AMapController _controller;
 
   _ShopDesc(this.shopInfo);
 
@@ -37,7 +38,7 @@ class _ShopDesc extends State<ShopDesc> {
 
   @override
   void dispose() {
-    _controller.dispose();
+//    _controller.dispose();
     super.dispose();
   }
 
@@ -113,50 +114,69 @@ class _ShopDesc extends State<ShopDesc> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 10, left: 10),
-            child: GestureDetector(
-              onTap: () {
-
-                  _controller.addMarker(
-                      MarkerOptions(position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng']))));
-
-              },
-              child: Wrap(
-                children: <Widget>[
-                  Text(
-                    '地址：${shopInfo['shop_address']}',
-                    style: TextStyle(color: Colors.black26),
-                  ),
-                  Icon(
-                    Icons.location_on,
-                    color: Colors.black26,
-                    size: 14,
-                  )
-                ],
-              ),
-            ),
+            height: 1,
+            margin: EdgeInsets.only(top: 10, bottom: 10),
+            color: Colors.black26,
           ),
           Container(
-            height: MediaQuery.of(context).size.height - 250,
-            padding: EdgeInsets.only(top: 10),
-            child:
-            AMapView(
-              onAMapViewCreated: (controller) {
-                _controller = controller;
-                controller.addMarker(MarkerOptions(
-                  position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
-                ));
-              },
-              amapOptions: AMapOptions(
-                zoomControlsEnabled: true,
-                logoPosition: LOGO_POSITION_BOTTOM_LEFT,
-                camera: CameraPosition(
-//                  target: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
-                  zoom: 17,
-                ),
-              ),
+            padding: EdgeInsets.only(left: 10, right: 10),
+            child: Wrap(
+              children: <Widget>[
+                Text('地址：'),
+                Text(shopInfo['shop_address'], style: TextStyle(color: Colors.black26)),
+                Icon(
+                  Icons.location_on,
+                  color: Colors.black26,
+                  size: 14,
+                )
+              ],
             ),
-          ),
+          )
+//          Container(
+//            padding: EdgeInsets.only(top: 10, left: 10),
+//            child: GestureDetector(
+//              onTap: () {
+//
+//                  _controller.addMarker(
+//                      MarkerOptions(position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng']))));
+//
+//              },
+//              child: Wrap(
+//                children: <Widget>[
+//                  Text(
+//                    '地址：${shopInfo['shop_address']}',
+//                    style: TextStyle(color: Colors.black26),
+//                  ),
+//                  Icon(
+//                    Icons.location_on,
+//                    color: Colors.black26,
+//                    size: 14,
+//                  )
+//                ],
+//              ),
+//            ),
+//          ),
+//          Container(
+//            height: MediaQuery.of(context).size.height - 250,
+//            padding: EdgeInsets.only(top: 10),
+//            child:
+//            AMapView(
+//              onAMapViewCreated: (controller) {
+//                _controller = controller;
+//                controller.addMarker(MarkerOptions(
+//                  position: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
+//                ));
+//              },
+//              amapOptions: AMapOptions(
+//                zoomControlsEnabled: true,
+//                logoPosition: LOGO_POSITION_BOTTOM_LEFT,
+//                camera: CameraPosition(
+////                  target: LatLng(double.parse(shopInfo['lat']), double.parse(shopInfo['lng'])),
+//                  zoom: 17,
+//                ),
+//              ),
+//            ),
+//          ),
         ],
       ),
     );

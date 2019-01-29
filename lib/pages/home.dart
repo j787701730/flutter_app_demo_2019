@@ -59,6 +59,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
           newClass[i].add(fullClass);
         }
       }
+
       if (len > 1) {
         for (var i = 0; i < len; i += 1) {
           cls(i);
@@ -81,13 +82,38 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('home'), actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: SearchBarDelegate());
-            }),
-      ]),
+      appBar: AppBar(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+//              padding: EdgeInsets.all(5),
+//              margin: EdgeInsets.only(right: 10),
+                child: GestureDetector(
+                  onTap: (){
+                    showSearch(context: context, delegate: SearchBarDelegate());
+                  },
+                  child: Container(
+                    height: 32,
+                    padding: EdgeInsets.only(top: 5, bottom: 5,left: 10),
+                    color: Colors.white,
+                    child: Text(
+                      '搜索商品',
+                      style: TextStyle(color: Colors.black26,fontSize: 14,height: 1.3),
+                    ),
+                  )
+                ),
+              )
+            ],
+          ),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchBarDelegate());
+                }),
+          ]),
       body: ListView(
         children: <Widget>[
           Container(

@@ -29,16 +29,29 @@ class SearchBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      width: 100.0,
-      height: 100.0,
-      child: Card(
-        color: Colors.redAccent,
-        child: Center(
-          child: Text(query),
-        ),
-      ),
-    );
+    return query == ''
+        ? Placeholder(
+            fallbackHeight: 1,
+            color: Colors.transparent,
+          )
+        : Container(
+            height: 40.0,
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.only(top: 5),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black26))),
+            width: MediaQuery.of(context).size.width,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_) {
+                  return new GoodsSearch({'words': query});
+                }));
+              },
+              child: Text(
+                query,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          );
   }
 
   @override

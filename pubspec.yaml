@@ -22,7 +22,7 @@ dependencies:
   flutter_swiper: ^1.1.4
   dio: ^1.0.13
   #  amap_base: ^0.2.11+3
-  amap_base_map: ^0.2.11
+#  amap_base_map: ^0.2.11
   shared_preferences: ^0.5.0
   charts_flutter: ^0.5.0
 
