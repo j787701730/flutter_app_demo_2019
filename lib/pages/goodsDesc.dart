@@ -24,6 +24,7 @@ class _GoodsDesc extends State<GoodsDesc> {
   Map goodsData = {};
   List hotSale = [];
   Map shopInfo = {};
+  bool goodsEvaShow = true;
 
   _GoodsDesc(this.title, this.goodsID);
 
@@ -55,6 +56,14 @@ class _GoodsDesc extends State<GoodsDesc> {
         shopInfo = data['shop'];
       });
     }, () {}, context);
+  }
+
+  String evaFlag = '0';
+
+  evaChange(val) {
+    setState(() {
+      evaFlag = val;
+    });
   }
 
   @override
@@ -154,36 +163,72 @@ class _GoodsDesc extends State<GoodsDesc> {
             decoration: BoxDecoration(color: Colors.black26),
           ),
           Container(
+            child: Row(
+              children: <Widget>[
+                FlatButton(
+                  child: Text('商品详情'),
+                  onPressed: () {
+                    setState(() {
+                      goodsEvaShow = true;
+                    });
+                  },
+                ),
+                FlatButton(
+                  child: Text('商品评价'),
+                  onPressed: () {
+                    setState(() {
+                      goodsEvaShow = false;
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
+          Offstage(
+            offstage: !goodsEvaShow,
+            child: Container(
 //            padding: EdgeInsets.all(10),
-            child: goodsData.length == 0
-                ? Placeholder(
-                    fallbackHeight: 1,
-                    color: Colors.transparent,
-                  )
-                : Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Text(
-                          '商品详情',
-                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+              child: goodsData.length == 0
+                  ? Placeholder(
+                      fallbackHeight: 1,
+                      color: Colors.transparent,
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 15),
+                          child: Text(
+                            '商品详情',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
                         ),
-                      ),
-                      Html(
-                          data: goodsData['goods_desc'],
-                          customRender: (node, children) {
-                            if (node is dom.Element) {
-                              switch (node.localName) {
-                                case "img":
-                                  return Image.network('$pathName${node.attributes['src']}');
+                        Html(
+                            data: goodsData['goods_desc'],
+                            customRender: (node, children) {
+                              if (node is dom.Element) {
+                                switch (node.localName) {
+                                  case "img":
+                                    return Image.network('$pathName${node.attributes['src']}');
 //                      case "custom_tag":
 //                        return CustomWidget(...);
+                                }
                               }
-                            }
-                          }),
-                    ],
-                  ),
+                            }),
+                      ],
+                    ),
+            ),
+          ),
+          Offstage(
+            offstage: goodsEvaShow,
+            child: Wrap(
+              children: <Widget>[
+                RadioListTile(value: '0', groupValue: evaFlag, title: Text('全部'), onChanged: evaChange),
+                RadioListTile(value: '1', groupValue: evaFlag, title: Text('好评'), onChanged: evaChange),
+                RadioListTile(value: '2', groupValue: evaFlag, title: Text('中评'), onChanged: evaChange),
+                RadioListTile(value: '3', groupValue: evaFlag, title: Text('差评'), onChanged: evaChange),
+              ],
+            ),
           )
         ],
       ),
