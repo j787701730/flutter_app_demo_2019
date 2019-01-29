@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'shopNav.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:flutter_html/flutter_html.dart';
 
 class GoodsDesc extends StatefulWidget {
   final title;
@@ -150,6 +152,38 @@ class _GoodsDesc extends State<GoodsDesc> {
             height: 1,
             margin: EdgeInsets.only(top: 8),
             decoration: BoxDecoration(color: Colors.black26),
+          ),
+          Container(
+//            padding: EdgeInsets.all(10),
+            child: goodsData.length == 0
+                ? Placeholder(
+                    fallbackHeight: 1,
+                    color: Colors.transparent,
+                  )
+                : Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(top: 15),
+                        child: Text(
+                          '商品详情',
+                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+                        ),
+                      ),
+                      Html(
+                          data: goodsData['goods_desc'],
+                          customRender: (node, children) {
+                            if (node is dom.Element) {
+                              switch (node.localName) {
+                                case "img":
+                                  return Image.network('$pathName${node.attributes['src']}');
+//                      case "custom_tag":
+//                        return CustomWidget(...);
+                              }
+                            }
+                          }),
+                    ],
+                  ),
           )
         ],
       ),
