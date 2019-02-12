@@ -610,7 +610,7 @@ class _AdminScreen extends State<AdminScreen> {
                     ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 10,top: 10),
+              padding: EdgeInsets.only(left: 10, top: 10),
               child: Text('本月最活跃商家', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             ),
             Container(
