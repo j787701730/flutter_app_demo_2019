@@ -7,7 +7,7 @@ class AdminScreen extends StatefulWidget {
   _AdminScreen createState() => _AdminScreen();
 }
 
-class _AdminScreen extends State<AdminScreen> {
+class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin{
   Map userOrdersData = {};
   Map trend = {};
   Map orderData = {};
@@ -39,8 +39,8 @@ class _AdminScreen extends State<AdminScreen> {
     getActiveShops();
   }
 
-//  @override
-//  bool get wantKeepAlive => true;
+  @override
+  bool get wantKeepAlive => true;
 
   getUsersOrders() {
     ajax('admin.Platform/usersOrdsCnt', {}, false, (data) {
