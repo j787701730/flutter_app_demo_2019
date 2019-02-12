@@ -7,7 +7,7 @@ class AdminScreen extends StatefulWidget {
   _AdminScreen createState() => _AdminScreen();
 }
 
-class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin {
+class _AdminScreen extends State<AdminScreen> {
   Map userOrdersData = {};
   Map trend = {};
   Map orderData = {};
@@ -39,8 +39,8 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
     getActiveShops();
   }
 
-  @override
-  bool get wantKeepAlive => true;
+//  @override
+//  bool get wantKeepAlive => true;
 
   getUsersOrders() {
     ajax('admin.Platform/usersOrdsCnt', {}, false, (data) {
@@ -68,7 +68,6 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   getActiveShops() {
     ajax('admin.platForm/activeShops', activeShops, false, (data) {
-      print(data['data']);
       setState(() {
         activeShops = data['data'];
       });
@@ -218,7 +217,6 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
         goodsData.add(new PieUser(int.parse(v['id']), v['user_type'], v['cnts']));
       });
     }
-
     return [
       new charts.Series<PieUser, int>(
         id: 'PieUser',
@@ -244,11 +242,10 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
         measures[datumPair.series.displayName] = datumPair.datum.num;
       });
     }
-//    print(measures);
     // Request a build.
     setState(() {
       _pieUserType = type;
-      _pieUserNum = measures;
+      _pieUserNum = measures['PieUser'];
     });
   }
 
@@ -471,7 +468,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                               Container(
                                 child: _userMonth == null
                                     ? Placeholder(
-                                        fallbackHeight: 14,
+                                        fallbackHeight: 16,
                                         color: Colors.transparent,
                                       )
                                     : Text('$_userMonth月：${_userNum['Sales']}'),
@@ -497,7 +494,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                               Container(
                                 child: _orderMonth == null
                                     ? Placeholder(
-                                        fallbackHeight: 14,
+                                        fallbackHeight: 16,
                                         color: Colors.transparent,
                                       )
                                     : Text('$_orderMonth月：${_orderCnt['OrdersCnt']} ￥${_orderCnt['OrdersPrice']}'),
@@ -523,7 +520,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                               Container(
                                 child: _goodsMonth == null
                                     ? Placeholder(
-                                        fallbackHeight: 14,
+                                        fallbackHeight: 16,
                                         color: Colors.transparent,
                                       )
                                     : Text('$_goodsMonth月：${_goodsNum['Goods']}'),
@@ -565,10 +562,10 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                           Container(
                             child: _pieUserType == null
                                 ? Placeholder(
-                                    fallbackHeight: 14,
+                                    fallbackHeight: 16,
                                     color: Colors.transparent,
                                   )
-                                : Text('$_pieUserType：${_pieUserNum['PieUser']}'),
+                                : Text('$_pieUserType：$_pieUserNum'),
                           ),
                         ],
                       ),
@@ -603,7 +600,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                           Container(
                             child: _pieGoodsName == null
                                 ? Placeholder(
-                                    fallbackHeight: 14,
+                                    fallbackHeight: 16,
                                     color: Colors.transparent,
                                   )
                                 : Text('$_pieGoodsName：${_pieGoodsNum['PieGoods']}'),
@@ -613,7 +610,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                     ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 10),
+              padding: EdgeInsets.only(left: 10,top: 10),
               child: Text('本月最活跃商家', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             ),
             Container(

@@ -4,6 +4,11 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'shopNav.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter_html/flutter_html.dart';
+import 'package:fluwx/fluwx.dart' as fluwx;
+import 'package:chewie/chewie.dart';
+import 'package:chewie/src/chewie_player.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:video_player/video_player.dart';
 
 class GoodsDesc extends StatefulWidget {
   final title;
@@ -28,11 +33,50 @@ class _GoodsDesc extends State<GoodsDesc> {
 
   _GoodsDesc(this.title, this.goodsID);
 
+  VideoPlayerController _videoPlayerController1;
+  ChewieController _chewieController;
+
   @override
   initState() {
     super.initState();
     getDesc();
     getShopInfo();
+    _initFluwx();
+    _videoPlayerController1 =
+        VideoPlayerController.network(
+          'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4');
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: true,
+      // Try playing around with some of these other options:
+
+      // showControls: false,
+      // materialProgressColors: ChewieProgressColors(
+      //   playedColor: Colors.red,
+      //   handleColor: Colors.blue,
+      //   backgroundColor: Colors.grey,
+      //   bufferedColor: Colors.lightGreen,
+      // ),
+      // placeholder: Container(
+      //   color: Colors.grey,
+      // ),
+      // autoInitialize: true,
+    );
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController1.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  _initFluwx() async {
+    await fluwx.register(appId: "wxca37bcab7fbd96a4", doOnAndroid: true, doOnIOS: true, enableMTA: false);
+    var result = await fluwx.isWeChatInstalled();
+    print("is installed $result");
   }
 
   getDesc() {
@@ -66,14 +110,40 @@ class _GoodsDesc extends State<GoodsDesc> {
     });
   }
 
+  Future<void> initPlatformState() async {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                fluwx.share(fluwx.WeChatShareTextModel(
+                    text: "text from fluwx",
+                    transaction: "transaction}", //仅在android上有效，下同。
+                    scene: fluwx.WeChatScene.SESSION));
+              },
+              icon: Icon(
+                Icons.share,
+                color: Colors.white,
+              ))
+        ],
       ),
       body: ListView(
         children: <Widget>[
+          Container(
+            child: Chewie(
+              controller: _chewieController,
+            ),
+          ),
+          FlatButton(
+            onPressed: () {
+              _chewieController.enterFullScreen();
+            },
+            child: Text('Fullscreen'),
+          ),
           Container(
             height: MediaQuery.of(context).size.width,
             child: goodsData.length == 0
@@ -223,10 +293,23 @@ class _GoodsDesc extends State<GoodsDesc> {
             offstage: goodsEvaShow,
             child: Wrap(
               children: <Widget>[
-                RadioListTile(value: '0', groupValue: evaFlag, title: Text('全部'), onChanged: evaChange),
-                RadioListTile(value: '1', groupValue: evaFlag, title: Text('好评'), onChanged: evaChange),
-                RadioListTile(value: '2', groupValue: evaFlag, title: Text('中评'), onChanged: evaChange),
-                RadioListTile(value: '3', groupValue: evaFlag, title: Text('差评'), onChanged: evaChange),
+                SizedBox(
+                    width: 120,
+                    child: RadioListTile(
+                      value: '0',
+                      groupValue: evaFlag,
+                      title: Text('全部'),
+                      onChanged: evaChange,
+                    )),
+                SizedBox(
+                    width: 120,
+                    child: RadioListTile(value: '1', groupValue: evaFlag, title: Text('好评'), onChanged: evaChange)),
+                SizedBox(
+                    width: 120,
+                    child: RadioListTile(value: '2', groupValue: evaFlag, title: Text('中评'), onChanged: evaChange)),
+                SizedBox(
+                    width: 120,
+                    child: RadioListTile(value: '3', groupValue: evaFlag, title: Text('差评'), onChanged: evaChange)),
               ],
             ),
           )
