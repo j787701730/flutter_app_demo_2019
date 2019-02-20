@@ -7,7 +7,7 @@ class AdminScreen extends StatefulWidget {
   _AdminScreen createState() => _AdminScreen();
 }
 
-class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin{
+class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin {
   Map userOrdersData = {};
   Map trend = {};
   Map orderData = {};
@@ -44,6 +44,9 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   getUsersOrders() {
     ajax('admin.Platform/usersOrdsCnt', {}, false, (data) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         userOrdersData = data['data'];
       });
@@ -52,6 +55,9 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   getTrend() {
     ajax('admin.Platform/trend', {}, false, (data) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         trend = data['data'];
       });
@@ -60,6 +66,9 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   getPieData() {
     ajax('admin.Platform/pieChart', {}, false, (data) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         pieData = data['data'];
       });
@@ -68,6 +77,9 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   getActiveShops() {
     ajax('admin.platForm/activeShops', activeShops, false, (data) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         activeShops = data['data'];
       });
@@ -108,6 +120,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _userMonth = time;
       _userNum = measures;
@@ -160,6 +173,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _orderMonth = time;
       _orderCnt = measures;
@@ -200,6 +214,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _goodsMonth = time;
       _goodsNum = measures;
@@ -243,6 +258,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _pieUserType = type;
       _pieUserNum = measures['PieUser'];
@@ -286,6 +302,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _pieGoodsName = type;
       _pieGoodsNum = measures;
@@ -293,6 +310,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
   }
 
   changeOffstageIndex(index) {
+    if (!mounted) return;
     setState(() {
       offstageIndex = index;
     });

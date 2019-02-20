@@ -28,6 +28,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
 
   getScoreData() {
     ajax('shops/scoreData', {}, false, (data) {
+      if (!mounted) return;
       setState(() {
         scoreData = data['score'];
       });
@@ -36,6 +37,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
 
   getOrdersData() {
     ajax('shops/ordsData', {}, false, (data) {
+      if (!mounted) return;
       setState(() {
         orderData = data['ords'];
       });
@@ -44,6 +46,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
 
   getCntsData() {
     ajax('shops/cntsData', {}, false, (data) {
+      if (!mounted) return;
       setState(() {
         cntData = data['cnts'];
       });
@@ -81,6 +84,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
       });
     }
     // Request a build.
+    if (!mounted) return;
     setState(() {
       _year = time;
       _sales = measures;

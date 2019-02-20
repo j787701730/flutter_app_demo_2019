@@ -24,6 +24,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
 
   getUserInfo() {
     ajax('user/info', {}, false, (data) {
+      if (!mounted) return;
       setState(() {
         userInfo = data['data'];
       });
