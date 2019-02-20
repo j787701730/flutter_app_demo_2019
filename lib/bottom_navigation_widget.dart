@@ -8,13 +8,17 @@ class BottomNavigationWidget extends StatefulWidget {
   _BottomNavigationWidgetState createState() => _BottomNavigationWidgetState();
 }
 
-class _BottomNavigationWidgetState extends State<BottomNavigationWidget> with SingleTickerProviderStateMixin {
+class _BottomNavigationWidgetState extends State<BottomNavigationWidget>
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   final _BottomNavigationColor = Colors.black54;
   final _activeColor = Colors.blue;
   int _currentIndex = 0;
 
   List<Widget> list = List();
   TabController _tabController;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -35,75 +39,78 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> with Si
 //  @override
 //  bool get wantKeepAlive => true;
   DateTime _lastPressedAt;
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child: Scaffold(
-      body: new TabBarView(
-        controller: _tabController, children: <Widget>[HomeScreen(), UserScreen(), ShopScreen(), AdminScreen()]),
-      bottomNavigationBar: Material(
-        child: SafeArea(
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F0F0),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: const Color(0xFFd0d0d0),
-                  blurRadius: 1.0,
-                  spreadRadius: 1.0,
+    return WillPopScope(
+        child: Scaffold(
+            body: new TabBarView(
+                controller: _tabController,
+                children: <Widget>[HomeScreen(), UserScreen(), ShopScreen(), AdminScreen()]),
+            bottomNavigationBar: Material(
+              child: SafeArea(
+                  child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F0F0),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: const Color(0xFFd0d0d0),
+                      blurRadius: 1.0,
+                      spreadRadius: 1.0,
 //                  offset: Offset(-1.0, -1.0),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            height: 48,
-            child: TabBar(
-              labelColor: Theme.of(context).primaryColor,
-              unselectedLabelColor: Colors.black26,
-              indicatorColor: Colors.transparent,
-              labelStyle: TextStyle(fontSize: 12),
-              // 下划线颜色
+                height: 48,
+                child: TabBar(
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Colors.black26,
+                  indicatorColor: Colors.transparent,
+                  labelStyle: TextStyle(fontSize: 12),
+                  // 下划线颜色
 //              indicatorWeight: 3.0,
-              tabs: <Tab>[
+                  tabs: <Tab>[
 //                Tab(text: '首页', icon: Icon(Icons.home)),
 //                Tab(text: '个人中心', icon: Icon(Icons.person)),
 //                Tab(text: '商家管理', icon: Icon(Icons.store_mall_directory)),
 //                Tab(text: '后台管理', icon: Icon(Icons.assessment)),
-                Tab(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.home), Text('　首页　')],
-                    ),
-                  )),
-                Tab(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.person), Text('个人中心')],
+                    Tab(
+                        child: Container(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[Icon(Icons.home), Text('　首页　')],
+                      ),
                     )),
-                ),
-                Tab(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.store_mall_directory), Text('商家管理')],
-                    )),
-                ),
-                Tab(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[Icon(Icons.assessment), Text('后台管理')],
+                    Tab(
+                      child: Container(
+                          width: MediaQuery.of(context).size.width / 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[Icon(Icons.person), Text('个人中心')],
+                          )),
                     ),
-                  )),
-              ],
-              controller: _tabController,
-            ),
-          )),
-      )
+                    Tab(
+                      child: Container(
+                          width: MediaQuery.of(context).size.width / 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[Icon(Icons.store_mall_directory), Text('商家管理')],
+                          )),
+                    ),
+                    Tab(
+                        child: Container(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[Icon(Icons.assessment), Text('后台管理')],
+                      ),
+                    )),
+                  ],
+                  controller: _tabController,
+                ),
+              )),
+            )
 //      BottomNavigationBar(
 //          items: [
 //            BottomNavigationBarItem(
@@ -164,14 +171,14 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> with Si
 //            });
 //          },
 //          type: BottomNavigationBarType.fixed),
-    ), onWillPop: () async {
-      if (_lastPressedAt == null ||
-        DateTime.now().difference(_lastPressedAt) > Duration(seconds: 1)) {
-        //两次点击间隔超过1秒则重新计时
-        _lastPressedAt = DateTime.now();
-        return false;
-      }
-      return true;
-    });
+            ),
+        onWillPop: () async {
+          if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 1)) {
+            //两次点击间隔超过1秒则重新计时
+            _lastPressedAt = DateTime.now();
+            return false;
+          }
+          return true;
+        });
   }
 }
