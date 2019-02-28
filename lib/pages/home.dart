@@ -25,11 +25,11 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     _pullNet(context);
     getGoodsClass(context);
     _readGoods();
-    super.initState();
   }
 
   _pullNet(context) {

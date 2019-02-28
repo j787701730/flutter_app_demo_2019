@@ -13,9 +13,9 @@ class _GoodsClass extends State<GoodsClass> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     getGoodsClass(context);
-    super.initState();
   }
 
   getGoodsClass(context) {

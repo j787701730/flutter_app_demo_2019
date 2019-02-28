@@ -29,6 +29,7 @@ class _GoodsSearch extends State<GoodsSearch> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     if (data['classID'] != null) {
       param['class_id'] = data['classID'].toString();
@@ -53,7 +54,6 @@ class _GoodsSearch extends State<GoodsSearch> {
       }
     });
 //    print(data);
-    super.initState();
   }
 
   @override

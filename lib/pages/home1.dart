@@ -122,9 +122,9 @@ class _IndexBannerWidgetState extends State<IndexBannerWidget> with AutomaticKee
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     getSlider(context);
-    super.initState();
   }
 
   getSlider(context) {
@@ -175,9 +175,9 @@ class _GoodsClassWidgetState extends State<GoodsClassWidget> with AutomaticKeepA
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     getGoodsClass(context);
-    super.initState();
   }
 
   getGoodsClass(context) {
@@ -285,9 +285,9 @@ class _GoodsWidgetState extends State<GoodsWidget> with AutomaticKeepAliveClient
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     getGoods(context);
-    super.initState();
   }
 
   getGoods(context) {
