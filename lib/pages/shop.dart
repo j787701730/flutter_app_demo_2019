@@ -93,6 +93,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('商家管理'),

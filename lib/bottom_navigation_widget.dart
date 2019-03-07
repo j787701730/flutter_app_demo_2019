@@ -42,6 +42,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return WillPopScope(
         child: Scaffold(
             body: new TabBarView(

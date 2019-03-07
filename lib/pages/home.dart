@@ -108,6 +108,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
           title: Row(

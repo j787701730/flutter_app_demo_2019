@@ -346,6 +346,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('后台管理'),

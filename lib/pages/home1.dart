@@ -137,6 +137,7 @@ class _IndexBannerWidgetState extends State<IndexBannerWidget> with AutomaticKee
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       height: MediaQuery.of(context).size.width / 1000 * 514,
       child: Swiper(
