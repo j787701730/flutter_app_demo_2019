@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import '../util/menuConfig.dart';
 
+import 'dart:async';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
+
 class UserScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -11,6 +17,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
   Map userInfo = {};
+  Map userInfoModify = {};
 
   @override
   bool get wantKeepAlive => true;
@@ -25,10 +32,38 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
   getUserInfo() {
     ajax('user/info', {}, false, (data) {
       if (!mounted) return;
+      userInfoModify = data['data'];
       setState(() {
         userInfo = data['data'];
       });
     }, () {}, context);
+  }
+
+  loginName(val) {
+    userInfoModify['login_name'] = val;
+  }
+
+  fullName(val) {
+    userInfoModify['full_name'] = val;
+  }
+
+  certNo(val) {
+    userInfoModify['cert_no'] = val;
+  }
+
+  commitUserInfo() {
+    print(userInfoModify);
+  }
+
+  var _image;
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    var image2 = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
   }
 
   @override
@@ -57,6 +92,15 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
+                          FloatingActionButton(
+                            onPressed: getImage,
+                            tooltip: 'Pick Image',
+                            child: Icon(Icons.add_a_photo),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
                           Text('用户头像：'),
                           Image.network(
                             '$pathName${userInfo['avatar']}',
@@ -66,14 +110,61 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
                           ),
                         ],
                       ),
-                      Row(
-                        children: <Widget>[Text('登录账号：'), Text(userInfo['login_name'])],
+                      Container(
+                        child: TextField(
+                          controller: TextEditingController.fromValue(TextEditingValue(
+                              // 设置内容
+                              text: userInfo['login_name'],
+                              // 保持光标在最后
+                              selection: TextSelection.fromPosition(TextPosition(
+                                  affinity: TextAffinity.downstream, offset: userInfo['login_name'].length)))),
+                          decoration: InputDecoration(hintText: '登录账号', prefixText: '登录账号：'),
+                          onChanged: loginName,
+                          maxLines: 1,
+                          maxLength: 20,
+                        ),
                       ),
-                      Row(
-                        children: <Widget>[Text('真实姓名：'), Text(userInfo['full_name'])],
+                      Container(
+                        child: TextField(
+                          controller: TextEditingController.fromValue(TextEditingValue(
+                              // 设置内容
+                              text: userInfo['full_name'],
+                              // 保持光标在最后
+                              selection: TextSelection.fromPosition(TextPosition(
+                                  affinity: TextAffinity.downstream, offset: userInfo['full_name'].length)))),
+                          decoration: InputDecoration(hintText: '真实姓名', prefixText: '真实姓名：'),
+                          onChanged: fullName,
+                          maxLines: 1,
+                          maxLength: 20,
+                        ),
                       ),
-                      Row(
-                        children: <Widget>[Text('　身份证：'), Text(userInfo['cert_no'])],
+                      Container(
+                        child: TextField(
+                          controller: TextEditingController.fromValue(TextEditingValue(
+                              // 设置内容
+                              text: userInfo['cert_no'],
+                              // 保持光标在最后
+                              selection: TextSelection.fromPosition(TextPosition(
+                                  affinity: TextAffinity.downstream, offset: userInfo['cert_no'].length)))),
+                          decoration: InputDecoration(hintText: '身份证', prefixText: '　身份证：'),
+                          onChanged: certNo,
+                          keyboardType: TextInputType.phone,
+                          maxLines: 1,
+                          maxLength: 18,
+                          inputFormatters: <TextInputFormatter>[
+//                            WhitelistingTextInputFormatter.digitsOnly, // 整数
+//                            BlacklistingTextInputFormatter.singleLineFormatter // 单行
+                            ClearNotNum(2)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: RaisedButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          onPressed: commitUserInfo,
+                          child: Text('保存'),
+                        ),
                       ),
                       Container(
                         height: 1,
@@ -90,7 +181,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
                         children: <Widget>[Text('用户状态：'), Text(userInfo['state'])],
                       ),
                       Row(
-                        children: <Widget>[Text('　推荐人：'), Text('')],
+                        children: <Widget>[Text('　推荐人：'), Text(userInfo['invite_user'])],
                       ),
                       Row(
                         children: <Widget>[Text('注册时间：'), Text(userInfo['register_time'])],
