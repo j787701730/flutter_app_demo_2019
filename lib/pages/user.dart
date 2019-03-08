@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import '../util/menuConfig.dart';
-
+import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
@@ -32,7 +32,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
   getUserInfo() {
     ajax('user/info', {}, false, (data) {
       if (!mounted) return;
-      userInfoModify = data['data'];
+      userInfoModify = jsonDecode(jsonEncode(data['data']));
       setState(() {
         userInfo = data['data'];
       });

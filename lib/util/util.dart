@@ -68,7 +68,7 @@ class ClearNotNum extends TextInputFormatter {
 
   ClearNotNum(this.decimal);
 
-  static const defaultDouble = 0.0;
+  static const defaultDouble = 0.001;
 
   static double strToFloat(String str, [double defaultValue = defaultDouble]) {
     try {
@@ -82,20 +82,29 @@ class ClearNotNum extends TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String value = newValue.text;
     int selectionIndex = newValue.selection.end;
-    if (value == ".") {
-      value = "0.";
-      selectionIndex++;
-    } else if (value != "" && value != defaultDouble.toString() && strToFloat(value, defaultDouble) == defaultDouble) {
-      value = oldValue.text;
-      selectionIndex = oldValue.selection.end;
-    } else if (value.startsWith('0') && value.substring(1, 2) == '0') {
-      print(value);
-      value = double.parse(value).toString();
-      selectionIndex = oldValue.selection.end;
-    } else if (value.contains('.')) {
-      if (value.substring(value.indexOf('.') + 1).length > decimal) {
-        value = value.substring(0, value.indexOf('.') + decimal + 1);
+    if (value.startsWith('-')) {
+      value = value.substring(1);
+      selectionIndex = value.length;
+    } else {
+      if (value == ".") {
+        value = "0.";
+        selectionIndex++;
+      } else if (value != "" &&
+          value != defaultDouble.toString() &&
+          strToFloat(value, defaultDouble) == defaultDouble) {
+        value = oldValue.text;
+        selectionIndex = oldValue.selection.end;
+        print('===');
+      } else if (value.startsWith('0') && value.length > 1 && value.substring(1, 2) == '0') {
+        value = double.tryParse(value).toString();
+        print(value);
         selectionIndex = value.length;
+      } else if (value.contains('.')) {
+        if (value.substring(value.indexOf('.') + 1).length > decimal) {
+          value = value.substring(0, value.indexOf('.') + decimal + 1);
+        }
+        selectionIndex = value.length;
+        print('xxx');
       }
     }
     return new TextEditingValue(
