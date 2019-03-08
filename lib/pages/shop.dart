@@ -108,7 +108,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-          scoreData.length == 0
+          scoreData.isEmpty
               ? Center(
                   child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                 )
@@ -263,7 +263,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
                   ),
                 ),
 //          订单
-          orderData.length == 0
+          orderData.isEmpty
               ? Center(
                   child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                 )
@@ -527,7 +527,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
                   ),
                 ),
           // 统计
-          cntData.length == 0
+          cntData.isEmpty
               ? Center(
                   child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                 )
@@ -771,7 +771,7 @@ class _SearchBarDemoState extends State<ShopScreen> with AutomaticKeepAliveClien
         ],
       ),),
       drawer: Drawer(
-        child: sellerAsideMenuConfig.length == 0
+        child: sellerAsideMenuConfig.isEmpty
           ? Placeholder()
           : ListView(
           children: sellerAsideMenuConfig.map<Widget>((item) {

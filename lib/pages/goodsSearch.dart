@@ -243,7 +243,7 @@ class _GoodsSearch extends State<GoodsSearch> {
           ),
           Padding(
             padding: EdgeInsets.all(10),
-            child: goodsData.length == 0
+            child: goodsData.isEmpty
                 ? isPassRequest == false
                     ? Placeholder(
                         color: Colors.transparent,

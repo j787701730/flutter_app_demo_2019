@@ -146,7 +146,7 @@ class _GoodsDesc extends State<GoodsDesc> {
           ),
           Container(
             height: MediaQuery.of(context).size.width,
-            child: goodsData.length == 0
+            child: goodsData.isEmpty
                 ? new Placeholder(
                     fallbackWidth: 100.0,
                     fallbackHeight: 100.0,
@@ -155,7 +155,7 @@ class _GoodsDesc extends State<GoodsDesc> {
                 : Swiper(
                     autoplay: true,
                     itemBuilder: (c, index) {
-                      return (goodsData.length == 0
+                      return (goodsData.isEmpty
                           ? new Placeholder(
                               fallbackWidth: 100.0,
                               fallbackHeight: 100.0,
@@ -166,12 +166,12 @@ class _GoodsDesc extends State<GoodsDesc> {
                               fit: BoxFit.contain,
                             ));
                     },
-                    itemCount: goodsData.length == 0 ? 1 : goodsData['goods_pics'].length,
+                    itemCount: goodsData.isEmpty ? 1 : goodsData['goods_pics'].length,
                     pagination: new SwiperPagination(),
                     control: new SwiperControl(),
                   ),
           ),
-          (goodsData.length == 0
+          (goodsData.isEmpty
               ? Placeholder(
                   fallbackWidth: 100.0,
                   fallbackHeight: 100.0,
@@ -207,7 +207,7 @@ class _GoodsDesc extends State<GoodsDesc> {
                     ],
                   ),
                 )),
-          (goodsData.length == 0
+          (goodsData.isEmpty
               ? Placeholder(
                   fallbackWidth: 100.0,
                   fallbackHeight: 100.0,
@@ -258,7 +258,7 @@ class _GoodsDesc extends State<GoodsDesc> {
             offstage: !goodsEvaShow,
             child: Container(
 //            padding: EdgeInsets.all(10),
-              child: goodsData.length == 0
+              child: goodsData.isEmpty
                   ? Placeholder(
                       fallbackHeight: 1,
                       color: Colors.transparent,

@@ -151,37 +151,37 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.width / 1000 * 514,
-            child: Swiper(
-              autoplay: true,
-              itemBuilder: (c, index) {
-                return (slider.length == 0
-                    ? new Placeholder(
-                        fallbackWidth: 100.0,
-                        fallbackHeight: 100.0,
-                        color: Colors.transparent,
-                      )
-                    : new Image.network(
+            child: slider.isEmpty
+                ? new Placeholder(
+                    fallbackWidth: 100.0,
+                    fallbackHeight: 100.0,
+                    color: Colors.transparent,
+                  )
+                : Swiper(
+                    autoplay: true,
+                    itemBuilder: (c, index) {
+                      return (new Image.network(
                         "$pathName${slider[index]['pic_url']}",
                         fit: BoxFit.contain,
                       ));
-              },
-              itemCount: slider.length == 0 ? 1 : slider.length,
-              pagination: new SwiperPagination(),
-              control: new SwiperControl(),
-            ),
+                    },
+                    itemCount: slider.length,
+                    pagination: new SwiperPagination(),
+                    control: new SwiperControl(),
+                  ),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(0, 12, 0, 0),
             height: MediaQuery.of(context).size.width / 5 * 2 + 32,
-            child: Swiper(
-              itemBuilder: (c, index) {
-                return (goodsClass.length == 0
-                    ? new Placeholder(
-                        fallbackWidth: 100.0,
-                        fallbackHeight: 100.0,
-                        color: Colors.transparent,
-                      )
-                    : new Wrap(
+            child: goodsClass.isEmpty
+                ? new Placeholder(
+                    fallbackWidth: 100.0,
+                    fallbackHeight: 100.0,
+                    color: Colors.transparent,
+                  )
+                : Swiper(
+                    itemBuilder: (c, index) {
+                      return (new Wrap(
                         runSpacing: 6.0,
                         children: goodsClass[index].map<Widget>((item) {
                           return new SizedBox(
@@ -218,14 +218,14 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                           );
                         }).toList(),
                       ));
-              },
-              itemCount: goodsClass.length == 0 ? 1 : goodsClass.length,
-              pagination: new SwiperPagination(),
-//              control: new SwiperControl(),
-            ),
+                    },
+                    itemCount: goodsClass.length,
+                    pagination: new SwiperPagination(),
+//                    control: new SwiperControl(),
+                  ),
           ),
           Container(
-            child: (goods.length == 0
+            child: (goods.isEmpty
                 ? Center(
                     child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                   )

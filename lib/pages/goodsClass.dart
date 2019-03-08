@@ -37,7 +37,7 @@ class _GoodsClass extends State<GoodsClass> {
           children: <Widget>[
             Container(
               width: 120,
-              child: (goodsClassData.length == 0
+              child: (goodsClassData.isEmpty
                   ? Placeholder(
                       color: Colors.transparent,
                     )
@@ -79,7 +79,7 @@ class _GoodsClass extends State<GoodsClass> {
                     )),
             ),
             Expanded(
-              child: goodsClassItem.length == 0
+              child: goodsClassItem.isEmpty
                   ? Placeholder(
                       color: Colors.transparent,
                     )

@@ -12,7 +12,7 @@ class ShopNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (shopInfo.length == 0
+    return (shopInfo.isEmpty
         ? Placeholder(
             fallbackHeight: 120,
             color: Colors.transparent,

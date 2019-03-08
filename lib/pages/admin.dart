@@ -354,7 +354,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
       body: SafeArea(
         child: ListView(
           children: <Widget>[
-            userOrdersData.length == 0
+            userOrdersData.isEmpty
                 ? Center(
                     child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                   )
@@ -430,7 +430,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                     ),
                   ),
             // 趋势
-            trend.length == 0
+            trend.isEmpty
                 ? Center(
                     child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                   )
@@ -552,7 +552,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                   ),
             // 饼图
             Container(
-              child: userOrdersData.length == 0
+              child: userOrdersData.isEmpty
                   ? Center(
                       child:
                           Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
@@ -591,7 +591,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
                     ),
             ),
             Container(
-              child: userOrdersData.length == 0
+              child: userOrdersData.isEmpty
                   ? Center(
                       child:
                           Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
@@ -634,7 +634,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: activeShops.length == 0
+              child: activeShops.isEmpty
                   ? Center(
                       child:
                           Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
@@ -656,7 +656,7 @@ class _AdminScreen extends State<AdminScreen> with AutomaticKeepAliveClientMixin
         ),
       ),
       drawer: Drawer(
-        child: adminAsideMenuConfig.length == 0
+        child: adminAsideMenuConfig.isEmpty
             ? Placeholder()
             : ListView(
                 children: adminAsideMenuConfig.map<Widget>((item) {

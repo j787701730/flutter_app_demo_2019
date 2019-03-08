@@ -36,7 +36,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(userInfo.length == 0 ? '' : userInfo['full_name']),
+        title: Text(userInfo.isEmpty ? '' : userInfo['full_name']),
       ),
       body: ListView(
         padding: EdgeInsets.all(10),
@@ -48,7 +48,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
-          userInfo.length == 0
+          userInfo.isEmpty
               ? Center(
                   child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
                 )
@@ -101,7 +101,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
         ],
       ),
       drawer: Drawer(
-        child: userAsideMenuConfig.length == 0
+        child: userAsideMenuConfig.isEmpty
             ? Placeholder()
             : ListView(
                 children: userAsideMenuConfig.map<Widget>((item) {

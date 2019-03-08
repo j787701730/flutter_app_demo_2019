@@ -196,7 +196,7 @@ class _ShopIndex extends State<ShopIndex> {
           ),
           Container(
             padding: EdgeInsets.all(10),
-            child: goodsData.length == 0
+            child: goodsData.isEmpty
                 ? isPassRequest == false
                     ? Placeholder(
                         color: Colors.transparent,
