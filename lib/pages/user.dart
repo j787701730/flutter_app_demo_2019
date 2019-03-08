@@ -32,7 +32,8 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
   getUserInfo() {
     ajax('user/info', {}, false, (data) {
       if (!mounted) return;
-      userInfoModify = jsonDecode(jsonEncode(data['data']));
+//      userInfoModify = jsonDecode(jsonEncode(data['data']));
+      userInfoModify = data['data'];
       setState(() {
         userInfo = data['data'];
       });
@@ -71,7 +72,8 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(userInfo.isEmpty ? '' : userInfo['full_name']),
+//        title: Text(userInfo.isEmpty ? '' : userInfo['full_name']),
+        title: Text('个人中心'),
       ),
       body: ListView(
         padding: EdgeInsets.all(10),
