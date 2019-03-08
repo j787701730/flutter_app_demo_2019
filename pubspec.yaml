@@ -22,7 +22,7 @@ dependencies:
   flutter_swiper: ^1.1.4
   dio: ^1.0.13
   #  amap_base: ^0.2.11+3
-#  amap_base_map: ^0.2.11
+  #  amap_base_map: ^0.2.11
   shared_preferences: ^0.5.0
   charts_flutter: ^0.5.0
   flutter_html: ^0.8.2
@@ -30,6 +30,8 @@ dependencies:
   chewie: ^0.9.6
   # 文件上传
   image_picker: ^0.5.0+3
+  #  常用工具类库
+  #  common_utils: ^1.1.1
 
 dev_dependencies:
   flutter_test:
