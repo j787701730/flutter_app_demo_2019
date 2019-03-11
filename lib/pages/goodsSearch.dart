@@ -341,7 +341,7 @@ class _GoodsSearch extends State<GoodsSearch> {
                   )
                 : Placeholder(
                     color: Colors.transparent,
-                    fallbackHeight: 100,
+                    fallbackHeight: isNotMore == true ? 20 : 100,
                   ),
           ),
         ],
