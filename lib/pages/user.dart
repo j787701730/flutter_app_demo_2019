@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import '../util/menuConfig.dart';
-import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 
@@ -59,12 +56,12 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
   var _image;
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    var image2 = await ImagePicker.pickImage(source: ImageSource.gallery);
+//    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+//    var image2 = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      _image = image;
-    });
+//    setState(() {
+//      _image = image;
+//    });
   }
 
   @override
@@ -156,7 +153,7 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
                           inputFormatters: <TextInputFormatter>[
 //                            WhitelistingTextInputFormatter.digitsOnly, // 整数
 //                            BlacklistingTextInputFormatter.singleLineFormatter // 单行
-                            ClearNotNum(2)
+                            ClearNotNum(decimal: 3, sign: '-')
                           ],
                         ),
                       ),

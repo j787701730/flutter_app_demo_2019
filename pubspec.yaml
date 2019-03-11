@@ -31,7 +31,7 @@ dependencies:
   # 文件上传
   image_picker: ^0.5.0+3
   #  常用工具类库
-  #  common_utils: ^1.1.1
+#  common_utils: ^1.1.1
 
 dev_dependencies:
   flutter_test:

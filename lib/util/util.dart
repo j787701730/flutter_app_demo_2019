@@ -61,12 +61,15 @@ ajax(String url, Object data, toast, sucFun, failFun, context) async {
   }
 }
 
-/// 只允许输入正小数
+/// 只允许输入小数
 class ClearNotNum extends TextInputFormatter {
   /// 保留小数位数
   final decimal;
 
-  ClearNotNum(this.decimal);
+  /// 正负
+  final sign;
+
+  ClearNotNum({this.decimal = 2, this.sign = '+'});
 
   static const defaultDouble = 0.001;
 
@@ -82,31 +85,85 @@ class ClearNotNum extends TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String value = newValue.text;
     int selectionIndex = newValue.selection.end;
-    if (value.startsWith('-')) {
-      value = value.substring(1);
-      selectionIndex = value.length;
-    } else {
+    if (sign == '-') {
       if (value == ".") {
         value = "0.";
         selectionIndex++;
+      } else if (value == '-') {
+        value = "-";
+        selectionIndex = value.length;
+      } else if (value.startsWith('-.')) {
+        value = "-0." + oldValue.text.substring(2, oldValue.text.indexOf('.'));
+        selectionIndex = value.length;
       } else if (value != "" &&
           value != defaultDouble.toString() &&
           strToFloat(value, defaultDouble) == defaultDouble) {
         value = oldValue.text;
         selectionIndex = oldValue.selection.end;
-        print('===');
       } else if (value.startsWith('0') && value.length > 1 && value.substring(1, 2) == '0') {
         value = double.tryParse(value).toString();
-        print(value);
         selectionIndex = value.length;
       } else if (value.contains('.')) {
         if (value.substring(value.indexOf('.') + 1).length > decimal) {
           value = value.substring(0, value.indexOf('.') + decimal + 1);
         }
+        selectionIndex = newValue.selection.end;
+        if (selectionIndex > value.length) {
+          selectionIndex = value.length;
+        }
+      }
+
+      if (value.startsWith('-') && value.length > 2 && value.substring(1, 2) == '0') {
+        if (value.contains('.')) {
+          if (double.tryParse(value) != 0) {
+            value = double.tryParse(value).toString();
+          }
+        } else {
+          value = int.tryParse(value).toString();
+        }
         selectionIndex = value.length;
-        print('xxx');
+      }
+    } else {
+      if (value.startsWith('-')) {
+        value = value.substring(1);
+        if (value.substring(value.indexOf('.') + 1).length > decimal) {
+          value = value.substring(0, value.indexOf('.') + decimal + 1);
+        }
+        selectionIndex = value.length;
+      } else {
+        if (value.startsWith(".")) {
+          value = "0" + value;
+          if (value.substring(value.indexOf('.') + 1).length > decimal) {
+            value = value.substring(0, value.indexOf('.') + decimal + 1);
+          }
+          selectionIndex++;
+        } else if (value != "" &&
+            value != defaultDouble.toString() &&
+            strToFloat(value, defaultDouble) == defaultDouble) {
+          value = oldValue.text;
+          selectionIndex = oldValue.selection.end;
+        } else if (value.contains('.')) {
+          if (value.substring(value.indexOf('.') + 1).length > decimal) {
+            value = value.substring(0, value.indexOf('.') + decimal + 1);
+          }
+          selectionIndex = newValue.selection.end;
+          if (selectionIndex > value.length) {
+            selectionIndex = value.length;
+          }
+        }
       }
     }
+    if (value.startsWith('0') && value.length > 1) {
+      if (value.contains('.')) {
+        if (double.tryParse(value) != 0) {
+          value = double.tryParse(value).toString();
+        }
+      } else {
+        value = int.tryParse(value).toString();
+      }
+      selectionIndex = value.length;
+    }
+
     return new TextEditingValue(
       text: value,
       selection: new TextSelection.collapsed(offset: selectionIndex),
