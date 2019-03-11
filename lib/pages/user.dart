@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import '../util/menuConfig.dart';
+import '../util/pageLoading.dart';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
@@ -72,21 +73,21 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
 //        title: Text(userInfo.isEmpty ? '' : userInfo['full_name']),
         title: Text('个人中心'),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(10),
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Text(
-              '个人资料',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-          ),
-          userInfo.isEmpty
-              ? Center(
-                  child: Container(padding: EdgeInsets.only(bottom: 10, top: 10), child: CircularProgressIndicator()),
-                )
-              : Container(
+      body: userInfo.isEmpty
+          ? PageLoading()
+          : ListView(
+              padding: EdgeInsets.all(10),
+              children: <Widget>[
+//                Container(
+//                  margin: EdgeInsets.only(bottom: 20),
+//                  child: Center(
+//                    child: Text(
+//                      '个人资料',
+//                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+//                    ),
+//                  ),
+//                ),
+                Container(
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -188,8 +189,8 @@ class _UserScreen extends State<UserScreen> with AutomaticKeepAliveClientMixin {
                     ],
                   ),
                 )
-        ],
-      ),
+              ],
+            ),
       drawer: Drawer(
         child: userAsideMenuConfig.isEmpty
             ? Placeholder()
