@@ -111,6 +111,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Scaffold(
       appBar: AppBar(
+          leading: null,
           title: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -126,14 +127,10 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                       height: 32,
                       padding: EdgeInsets.only(top: 5, bottom: 5, left: 10),
                       color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '搜索商品',
-                            style: TextStyle(color: Colors.black26, fontSize: 14, height: 1.3),
-                          ),
+                      child: Container(
+                        child: Text(
+                          '搜索商品',
+                          style: TextStyle(color: Colors.black26, fontSize: 14, height: 1.3),
                         ),
                       ),
                     )),
@@ -239,8 +236,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                           DecoratedBox(
                             decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: NetworkImage("${pathName}static/images/index/mobile/pic_09.png"),
-                                    fit: BoxFit.contain)),
+                                    image: NetworkImage("${pathName}static/images/index/mobile/pic_09.png"), fit: BoxFit.contain)),
                             child: Container(
                               padding: new EdgeInsets.only(top: 6.0, bottom: 6.0),
                               width: MediaQuery.of(context).size.width,
@@ -292,8 +288,7 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                               child: Text(
                                                 "￥${goodsItem['goods_price']}",
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                    color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+                                                style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
                                               ),
                                             ),
                                           )
