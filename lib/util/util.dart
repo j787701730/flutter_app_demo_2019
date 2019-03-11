@@ -93,7 +93,12 @@ class ClearNotNum extends TextInputFormatter {
         value = "-";
         selectionIndex = value.length;
       } else if (value.startsWith('-.')) {
-        value = "-0." + oldValue.text.substring(2, oldValue.text.indexOf('.'));
+        if (oldValue.text.indexOf('.') >= 0) {
+          value = "-0." + oldValue.text.substring(2, oldValue.text.indexOf('.'));
+        } else {
+          value = "-0.";
+        }
+
         selectionIndex = value.length;
       } else if (value != "" &&
           value != defaultDouble.toString() &&
