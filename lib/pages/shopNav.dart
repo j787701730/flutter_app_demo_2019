@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
+import 'package:flutter_app_demo/router.dart';
 import 'shopIndex.dart';
 import 'shopDesc.dart';
+import 'dart:convert';
 
 class ShopNav extends StatelessWidget {
   final shopInfo;
   final isNotJumpShopIndex;
   final isNotJumpShopDesc;
 
-  ShopNav(this.shopInfo, {this.isNotJumpShopIndex,this.isNotJumpShopDesc});
+  ShopNav(this.shopInfo, {this.isNotJumpShopIndex, this.isNotJumpShopDesc});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,11 @@ class ShopNav extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     if (isNotJumpShopIndex != true) {
-                      Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                        return new ShopIndex({'shop_id': shopInfo['shop_id'], 'shop_name': shopInfo['shop_name']});
-                      }));
+                      var data = {
+                        'shop_id': shopInfo['shop_id'],
+                        'shop_name': Utf8Encoder().convert(shopInfo['shop_name'])
+                      };
+                      Routes.router.navigateTo(context, '${Routes.shopIndex}?data=${jsonEncode(data)}');
                     }
                   },
                   child: Image.network(
@@ -41,9 +45,11 @@ class ShopNav extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       if (isNotJumpShopIndex != true) {
-                        Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                          return new ShopIndex({'shop_id': shopInfo['shop_id'], 'shop_name': shopInfo['shop_name']});
-                        }));
+                        var data = {
+                          'shop_id': shopInfo['shop_id'],
+                          'shop_name': Utf8Encoder().convert(shopInfo['shop_name'])
+                        };
+                        Routes.router.navigateTo(context, '${Routes.shopIndex}?data=${jsonEncode(data)}');
                       }
                     },
                     child: Column(
@@ -98,10 +104,9 @@ class ShopNav extends StatelessWidget {
                       FlatButton(
                         child: Text('店铺说明'),
                         onPressed: () {
-                          if(isNotJumpShopDesc != true){
-                            Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                              return new ShopDesc(shopInfo);
-                            }));
+                          if (isNotJumpShopDesc != true) {
+                            var info = {'shop_id': shopInfo['shop_id']};
+                            Routes.router.navigateTo(context, '${Routes.shopDesc}?data=${jsonEncode(info)}');
                           }
                         },
                       ),

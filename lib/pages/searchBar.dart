@@ -15,7 +15,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
           icon: Icon(Icons.search),
           onPressed: () {
             var json = jsonEncode({'words': Utf8Encoder().convert(query)});
-            Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json',replace: false);
+            Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json',replace: true);
           })
     ];
   }

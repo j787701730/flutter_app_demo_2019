@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
-import 'goodsSearch.dart';
+import 'package:flutter_app_demo/router.dart';
+import 'dart:convert';
 
 class GoodsClass extends StatefulWidget {
   _GoodsClass createState() => _GoodsClass();
@@ -98,9 +99,8 @@ class _GoodsClass extends State<GoodsClass> {
                                 width: (MediaQuery.of(context).size.width - 120 - 12) / 3,
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                                      return new GoodsSearch({'classID': item['value']});
-                                    }));
+                                    var json = jsonEncode({'classID': item['value']});
+                                    Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json');
                                   },
                                   child: Column(
                                     children: <Widget>[

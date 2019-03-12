@@ -254,7 +254,6 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                         'title': Utf8Encoder().convert(goodsItem['goods_name']),
                                         'goodsID': goodsItem['goods_id']
                                       });
-                                      print(json);
                                       Routes.router.navigateTo(context, '${Routes.goodsDesc}?data=$json');
                                     },
                                     child: Container(

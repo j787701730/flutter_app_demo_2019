@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
+
 //import 'package:amap_base_map/amap_base_map.dart';
+import 'dart:convert';
+import '../util/pageLoading.dart';
 
 class ShopDesc extends StatefulWidget {
   final data;
@@ -24,16 +27,15 @@ class _ShopDesc extends State<ShopDesc> {
 
   List hotSale = [];
 
-//  Map param = {'curr_page': '1', 'page_count': '6'};
-//  String words = '';
-  var shopData;
+  var shopData={};
 
-//  bool isPerformingRequest = true;
+  bool isPerformingRequest = true;
 
   @override
   initState() {
-//    getShopInfo();
     super.initState();
+    print(shopInfo);
+    getShopInfo();
   }
 
   @override
@@ -42,34 +44,37 @@ class _ShopDesc extends State<ShopDesc> {
     super.dispose();
   }
 
-//  getShopInfo() {
-//    setState(() {
-//      isPerformingRequest = true;
-//    });
-//    ajax(
-//        'shops/info',
-//        {
-//          'shop_id': data['shop_id'],
+  getShopInfo() {
+    setState(() {
+      isPerformingRequest = true;
+    });
+    ajax(
+        'shops/info',
+        {
+          'shop_id': jsonDecode(shopInfo)['shop_id'],
 //          'getExt': ["hot_sale", "shop"]
-//        },
-//        false, (data) {
-//      setState(() {
-//        hotSale = data['hot_sale'];
-//        shopInfo = data['shop'];
-//        isPerformingRequest = false;
-//      });
-//    }, () {}, context);
-//  }
+        },
+        false, (data) {
+          print(data);
+      setState(() {
+        hotSale = data['hot_sale'];
+        shopData = data['shop'];
+        isPerformingRequest = false;
+      });
+    }, () {}, context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(shopInfo['shop_name']),
+        title: Text(shopData.isEmpty? '': shopData['shop_name']),
       ),
-      body: ListView(
+      body:
+      shopData.isEmpty ? PageLoading():
+      ListView(
         children: <Widget>[
-          ShopNav(shopInfo, isNotJumpShopDesc: true),
+          ShopNav(shopData, isNotJumpShopDesc: true),
           Container(
             height: 1,
             decoration: BoxDecoration(color: Colors.black26),
@@ -77,8 +82,8 @@ class _ShopDesc extends State<ShopDesc> {
           Padding(
             padding: EdgeInsets.all(10),
             child: Column(
-              children: shopInfo['shop_pics'].keys.map<Widget>((item) {
-                return Image.network("$pathName${shopInfo['shop_pics'][item]['file_path']}");
+              children: shopData['shop_pics'].keys.map<Widget>((item) {
+                return Image.network("$pathName${shopData['shop_pics'][item]['file_path']}");
               }).toList(),
             ),
           ),
@@ -123,7 +128,7 @@ class _ShopDesc extends State<ShopDesc> {
             child: Wrap(
               children: <Widget>[
                 Text('地址：'),
-                Text(shopInfo['shop_address'], style: TextStyle(color: Colors.black26)),
+                Text(shopData['shop_address'], style: TextStyle(color: Colors.black26)),
                 Icon(
                   Icons.location_on,
                   color: Colors.black26,

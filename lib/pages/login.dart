@@ -35,7 +35,6 @@ class _Login extends State<Login> {
       form.save();
       ajax('user/login', {'autoLogin': true, 'lockAccount': false, 'password': pwd, 'username': userName}, false,
           (data) {
-        print(data);
         saveData(data);
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(builder: (context) => new BottomNavigationWidget()), (route) => route == null);

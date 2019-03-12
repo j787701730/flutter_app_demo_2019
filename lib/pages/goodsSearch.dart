@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'package:flutter_app_demo/router.dart';
-import 'shopIndex.dart';
 import 'dart:convert';
 
 class GoodsSearch extends StatefulWidget {
@@ -58,7 +57,6 @@ class _GoodsSearch extends State<GoodsSearch> {
         });
       }
     });
-//    print(data);
   }
 
   @override
@@ -101,9 +99,8 @@ class _GoodsSearch extends State<GoodsSearch> {
                       margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                            return new ShopIndex(shopData);
-                          }));
+                          var data = {'shop_id': shopData['shop_id'], 'shop_name': Utf8Encoder().convert(shopData['shop_name'])};
+                          Routes.router.navigateTo(context, '${Routes.shopIndex}?data=${jsonEncode(data)}');
                         },
                         child: DecoratedBox(
                           decoration: BoxDecoration(color: Color(0xFFEEEEEE)),

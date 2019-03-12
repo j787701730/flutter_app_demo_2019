@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
-import 'goodsDesc.dart';
 import 'package:flutter_app_demo/router.dart';
 import 'dart:convert';
 
 class ShopIndex extends StatefulWidget {
-  final data;
+  final params;
 
-  ShopIndex(this.data);
+  ShopIndex(this.params);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return new _ShopIndex(data);
+    return new _ShopIndex(params);
   }
 }
 
 class _ShopIndex extends State<ShopIndex> {
-  final data;
+  final params;
 
-  _ShopIndex(this.data);
+  _ShopIndex(this.params);
 
   List goodsData = [];
   List hotSale = [];
@@ -28,6 +27,7 @@ class _ShopIndex extends State<ShopIndex> {
   Map param = {'curr_page': '1', 'page_count': '6'};
   String words = '';
   var shopData;
+  var data;
   String orderPrice = 'goods_price desc';
 
   int goodsCount = 0;
@@ -38,6 +38,7 @@ class _ShopIndex extends State<ShopIndex> {
 
   @override
   initState() {
+    data = jsonDecode(params);
     getShopInfo();
     getGoodsList();
     _scrollController.addListener(() {
@@ -98,9 +99,14 @@ class _ShopIndex extends State<ShopIndex> {
 
   @override
   Widget build(BuildContext context) {
+    var list = List<int>();
+    ///字符串解码
+    data['shop_name'].forEach(list.add);
+    final String title = Utf8Decoder().convert(list);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(data['shop_name']),
+        title: Text(title),
       ),
       body: ListView(
         controller: _scrollController,
@@ -228,7 +234,8 @@ class _ShopIndex extends State<ShopIndex> {
                         width: MediaQuery.of(context).size.width / 2 - 10,
                         child: GestureDetector(
                           onTap: () {
-                            String json = jsonEncode({'title': Utf8Encoder().convert(item['goods_name']), 'goodsID': item['goods_id']});
+                            String json = jsonEncode(
+                                {'title': Utf8Encoder().convert(item['goods_name']), 'goodsID': item['goods_id']});
                             Routes.router.navigateTo(context, '${Routes.goodsDesc}?data=$json');
                           },
                           child: Column(
