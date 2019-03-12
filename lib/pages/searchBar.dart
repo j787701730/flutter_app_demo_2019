@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_demo/router.dart';
+import 'dart:convert';
 import 'asset.dart';
-import 'goodsSearch.dart';
 
 class SearchBarDelegate extends SearchDelegate<String> {
   @override
@@ -13,9 +14,8 @@ class SearchBarDelegate extends SearchDelegate<String> {
       IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
-            Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_) {
-              return new GoodsSearch({'words': query});
-            }));
+            var json = jsonEncode({'words': Utf8Encoder().convert(query)});
+            Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json',replace: false);
           })
     ];
   }
@@ -42,9 +42,8 @@ class SearchBarDelegate extends SearchDelegate<String> {
             width: MediaQuery.of(context).size.width,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_) {
-                  return new GoodsSearch({'words': query});
-                }));
+                var json = jsonEncode({'words': Utf8Encoder().convert(query)});
+                Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json',replace: true);
               },
               child: Text(
                 query,

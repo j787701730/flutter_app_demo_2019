@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_demo/router.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'searchBar.dart';
-import 'goodsDesc.dart';
-import 'goodsClass.dart';
-import 'goodsSearch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -186,13 +184,10 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                             child: GestureDetector(
                               onTap: () {
                                 if (item['value'] == 0) {
-                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                                    return new GoodsClass();
-                                  }));
+                                  Routes.router.navigateTo(context, Routes.goodsClass);
                                 } else {
-                                  Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                                    return new GoodsSearch({'classID': item['value']});
-                                  }));
+                                  var json = jsonEncode({'classID': item['value']});
+                                  Routes.router.navigateTo(context, '${Routes.goodsSearch}?data=$json');
                                 }
                               },
                               child: new Column(
@@ -236,7 +231,8 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                           DecoratedBox(
                             decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: NetworkImage("${pathName}static/images/index/mobile/pic_09.png"), fit: BoxFit.contain)),
+                                    image: NetworkImage("${pathName}static/images/index/mobile/pic_09.png"),
+                                    fit: BoxFit.contain)),
                             child: Container(
                               padding: new EdgeInsets.only(top: 6.0, bottom: 6.0),
                               width: MediaQuery.of(context).size.width,
@@ -253,9 +249,13 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                                        return new GoodsDesc(goodsItem['goods_name'], goodsItem['goods_id']);
-                                      }));
+//
+                                      String json = jsonEncode({
+                                        'title': Utf8Encoder().convert(goodsItem['goods_name']),
+                                        'goodsID': goodsItem['goods_id']
+                                      });
+                                      print(json);
+                                      Routes.router.navigateTo(context, '${Routes.goodsDesc}?data=$json');
                                     },
                                     child: Container(
                                       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -288,7 +288,8 @@ class _HomeScreen extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
                                               child: Text(
                                                 "￥${goodsItem['goods_price']}",
                                                 textAlign: TextAlign.left,
-                                                style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+                                                style: TextStyle(
+                                                    color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
                                               ),
                                             ),
                                           )

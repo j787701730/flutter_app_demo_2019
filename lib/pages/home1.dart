@@ -334,9 +334,9 @@ class _GoodsWidgetState extends State<GoodsWidget> with AutomaticKeepAliveClient
                           width: MediaQuery.of(context).size.width / 2,
                           child: GestureDetector(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                                  return GoodsDesc(goodsItem['goods_name'], goodsItem['goods_id']);
-                                }));
+//                                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+//                                  return GoodsDesc(goodsItem['goods_name'], goodsItem['goods_id']);
+//                                }));
                               },
                               child: Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 0),

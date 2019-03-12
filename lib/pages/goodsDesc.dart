@@ -9,29 +9,28 @@ import 'package:chewie/chewie.dart';
 import 'package:chewie/src/chewie_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:convert';
 
 class GoodsDesc extends StatefulWidget {
-  final title;
-  final goodsID;
+  final params;
 
-  GoodsDesc(this.title, this.goodsID);
+  GoodsDesc(this.params);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return new _GoodsDesc(title, goodsID);
+    return new _GoodsDesc(params);
   }
 }
 
 class _GoodsDesc extends State<GoodsDesc> {
-  final title;
-  final goodsID;
+  final params;
   Map goodsData = {};
   List hotSale = [];
   Map shopInfo = {};
   bool goodsEvaShow = true;
 
-  _GoodsDesc(this.title, this.goodsID);
+  _GoodsDesc(this.params);
 
   VideoPlayerController _videoPlayerController1;
   ChewieController _chewieController;
@@ -42,9 +41,7 @@ class _GoodsDesc extends State<GoodsDesc> {
     getDesc();
     getShopInfo();
     _initFluwx();
-    _videoPlayerController1 =
-        VideoPlayerController.network(
-          'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4');
+    _videoPlayerController1 = VideoPlayerController.network('http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4');
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1,
       aspectRatio: 3 / 2,
@@ -80,7 +77,7 @@ class _GoodsDesc extends State<GoodsDesc> {
   }
 
   getDesc() {
-    ajax('goods/desc', {'goods_id': goodsID}, false, (data) {
+    ajax('goods/desc', {'goods_id': jsonDecode(params)['goodsID']}, false, (data) {
       setState(() {
         goodsData = data['data'];
       });
@@ -91,7 +88,7 @@ class _GoodsDesc extends State<GoodsDesc> {
     ajax(
         'shops/info',
         {
-          'goods_id': goodsID,
+          'goods_id': jsonDecode(params)['goodsID'],
           'getExt': ["hot_sale", "shop"]
         },
         false, (data) {
@@ -114,6 +111,10 @@ class _GoodsDesc extends State<GoodsDesc> {
 
   @override
   Widget build(BuildContext context) {
+    var list = List<int>();
+    ///字符串解码
+    jsonDecode(params)['title'].forEach(list.add);
+    final String title = Utf8Decoder().convert(list);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),

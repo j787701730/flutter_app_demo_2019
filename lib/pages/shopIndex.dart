@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_demo/util/util.dart';
 import 'shopNav.dart';
 import 'goodsDesc.dart';
+import 'package:flutter_app_demo/router.dart';
+import 'dart:convert';
 
 class ShopIndex extends StatefulWidget {
   final data;
@@ -226,9 +228,8 @@ class _ShopIndex extends State<ShopIndex> {
                         width: MediaQuery.of(context).size.width / 2 - 10,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                              return new GoodsDesc(item['goods_name'], item['goods_id']);
-                            }));
+                            String json = jsonEncode({'title': Utf8Encoder().convert(item['goods_name']), 'goodsID': item['goods_id']});
+                            Routes.router.navigateTo(context, '${Routes.goodsDesc}?data=$json');
                           },
                           child: Column(
                             children: <Widget>[
